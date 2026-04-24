@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recipal — Reverse-Sear Steak (DEMO)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #7C9070; --sage-light: #A8BC9E; --sage-dark: #4E6145;
+    --cream: #F5F0E8; --wood: #8B6F47; --wood-light: #C4A882;
+    --charcoal: #2C2C2C; --warm-white: #FDFAF5; --muted: #7A7468;
+    --border: rgba(0,0,0,0.08); --beef: #C0392B;
+    --radius: 4px; --transition: 0.22s ease;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--warm-white); color: var(--charcoal); font-weight: 300; }
+
+  /* NAV */
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 72px; border-bottom: 1px solid var(--border); background: var(--warm-white); position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 600; color: var(--sage-dark); text-decoration: none; letter-spacing: -0.02em; }
+  .nav-logo span { color: var(--wood); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; transition: color var(--transition); }
+  .nav-links a:hover { color: var(--sage-dark); }
+  .nav-actions { display: flex; gap: 10px; }
+  .btn-ghost { display: inline-flex; padding: 8px 18px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 0.84rem; cursor: pointer; text-decoration: none; border-radius: var(--radius); transition: all var(--transition); }
+  .btn-ghost:hover { color: var(--charcoal); border-color: rgba(0,0,0,0.18); }
+  .btn-primary { display: inline-flex; padding: 8px 18px; background: var(--sage-dark); color: white; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; font-weight: 500; cursor: pointer; text-decoration: none; border: none; border-radius: var(--radius); transition: background var(--transition); }
+  .btn-primary:hover { background: var(--sage); }
+
+  /* DEMO BANNER */
+  .demo-banner { background: var(--sage-dark); color: white; text-align: center; padding: 10px 48px; font-size: 0.8rem; letter-spacing: 0.06em; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .demo-pill { background: rgba(255,255,255,0.15); padding: 2px 10px; border-radius: 20px; font-weight: 500; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* BREADCRUMB */
+  .breadcrumb { padding: 20px 80px; font-size: 0.8rem; color: var(--muted); display: flex; gap: 8px; align-items: center; border-bottom: 1px solid var(--border); }
+  .breadcrumb a { color: var(--muted); text-decoration: none; transition: color var(--transition); }
+  .breadcrumb a:hover { color: var(--charcoal); }
+  .bc-sep { opacity: 0.4; }
+
+  /* HERO */
+  .recipe-hero { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border); }
+  .recipe-hero-left { padding: 60px 80px; display: flex; flex-direction: column; justify-content: center; }
+  .recipe-tags { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: opacity var(--transition); }
+  .tag:hover { opacity: 0.75; }
+  .tag-protein { background: #fde8e8; color: var(--beef); }
+  .tag-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--beef); }
+  .tag-cut { background: var(--cream); color: var(--wood); }
+  .tag-diff { background: #fef8e7; color: #7a5c00; cursor: default; }
+  .tag-diff:hover { opacity: 1; }
+  .tag-demo { background: var(--sage-dark); color: white; cursor: default; }
+  .tag-demo:hover { opacity: 1; }
+
+  .recipe-hero-left h1 { font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 600; line-height: 1.15; margin-bottom: 16px; }
+  .recipe-desc { font-size: 1rem; line-height: 1.8; color: var(--muted); margin-bottom: 32px; max-width: 460px; }
+  .recipe-meta-row { display: flex; gap: 32px; margin-bottom: 32px; flex-wrap: wrap; }
+  .meta-item { }
+  .meta-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .meta-value { font-size: 1rem; font-weight: 500; }
+
+  /* ACTIONS */
+  .recipe-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .rating-row { display: flex; align-items: center; gap: 10px; }
+  .rating-stars { display: flex; gap: 3px; }
+  .rstar { font-size: 1.1rem; color: #d4c5a0; cursor: pointer; transition: color var(--transition); }
+  .rstar.on { color: var(--wood); }
+  .rstar:hover { color: var(--wood); }
+  .rating-info { font-size: 0.84rem; color: var(--muted); }
+  .rating-info strong { color: var(--charcoal); }
+  .bookmark-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border: 1px solid var(--border); background: white; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 0.84rem; cursor: pointer; border-radius: 24px; transition: all var(--transition); }
+  .bookmark-btn svg { width: 15px; height: 15px; fill: none; stroke: var(--muted); stroke-width: 2; transition: all var(--transition); }
+  .bookmark-btn:hover { border-color: var(--sage-dark); color: var(--sage-dark); }
+  .bookmark-btn:hover svg { stroke: var(--sage-dark); }
+  .bookmark-btn.saved { background: var(--sage-dark); color: white; border-color: var(--sage-dark); }
+  .bookmark-btn.saved svg { fill: white; stroke: white; }
+
+  .recipe-hero-right { background: var(--cream); display: flex; align-items: center; justify-content: center; min-height: 480px; overflow: hidden; }
+  .hero-img-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #e8e0d0 0%, #d4c9b5 50%, #c4b89e 100%); display: flex; align-items: center; justify-content: center; }
+  .hero-img-inner { text-align: center; opacity: 0.4; }
+  .hero-img-inner svg { width: 80px; height: 80px; color: var(--wood); }
+  .hero-img-inner p { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wood); margin-top: 12px; }
+
+  /* VIDEO */
+  .video-section { padding: 56px 80px; background: var(--cream); border-bottom: 1px solid var(--border); }
+  .video-section h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 600; margin-bottom: 20px; }
+  .video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; max-width: 760px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+  .video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 6px; }
+
+  /* BODY LAYOUT */
+  .recipe-body { display: grid; grid-template-columns: 300px 1fr; gap: 0; max-width: 1100px; margin: 0 auto; padding: 80px; }
+
+  /* LEFT COL */
+  .ingredients-col { padding-right: 60px; }
+  .col-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+
+  .servings-control { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+  .servings-label { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .servings-btn { width: 28px; height: 28px; border: 1px solid var(--border); background: white; cursor: pointer; font-size: 1rem; color: var(--charcoal); display: flex; align-items: center; justify-content: center; transition: all var(--transition); border-radius: var(--radius); }
+  .servings-btn:hover { border-color: var(--sage); color: var(--sage-dark); }
+  .servings-num { font-size: 1rem; font-weight: 500; min-width: 20px; text-align: center; }
+
+  .ingredient-list { list-style: none; margin-bottom: 48px; }
+  .ingredient-item { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; gap: 12px; }
+  .ingredient-item:last-child { border-bottom: none; }
+  .ing-name { color: var(--charcoal); }
+  .ing-qty { color: var(--muted); font-weight: 500; white-space: nowrap; }
+
+  /* EQUIPMENT */
+  .equipment-list { list-style: none; }
+  .equipment-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; gap: 12px; }
+  .equipment-item:last-child { border-bottom: none; }
+  .eq-name { color: var(--charcoal); }
+  .eq-link { display: inline-flex; align-items: center; gap: 4px; font-size: 0.76rem; color: var(--wood); text-decoration: none; border-bottom: 1px dashed var(--wood-light); font-weight: 500; transition: color var(--transition); white-space: nowrap; }
+  .eq-link:hover { color: var(--sage-dark); border-color: var(--sage-light); }
+  .eq-link svg { width: 10px; height: 10px; }
+
+  /* SPONSOR BLOCK */
+  .sponsor-block { margin-top: 20px; padding: 16px; background: var(--cream); border-radius: var(--radius); border-left: 3px solid var(--wood-light); }
+  .sponsor-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .sponsor-logo { display: flex; align-items: center; gap: 7px; text-decoration: none; transition: opacity var(--transition); }
+  .sponsor-logo:hover { opacity: 0.75; }
+  .sponsor-logo-icon { width: 28px; height: 28px; background: var(--wood); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .sponsor-logo-icon svg { width: 14px; height: 14px; stroke: white; fill: none; }
+  .sponsor-logo-name { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-weight: 600; color: var(--wood); }
+  .sponsor-pill { font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(139,111,71,0.12); color: var(--wood); padding: 2px 8px; border-radius: 20px; font-weight: 500; margin-left: auto; }
+  .sponsor-block p { font-size: 0.76rem; color: var(--muted); line-height: 1.6; font-style: italic; }
+
+  /* RIGHT COL */
+  .instructions-col { border-left: 1px solid var(--border); padding-left: 60px; }
+  .step-list { list-style: none; }
+  .step-item { display: grid; grid-template-columns: 36px 1fr; gap: 20px; margin-bottom: 40px; }
+  .step-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 400; color: var(--sage-light); line-height: 1; padding-top: 2px; }
+  .step-title { font-size: 0.95rem; font-weight: 500; margin-bottom: 8px; }
+  .step-text { font-size: 0.9rem; line-height: 1.8; color: var(--muted); }
+  .step-tip { display: inline-flex; align-items: flex-start; gap: 7px; margin-top: 10px; padding: 10px 12px; background: var(--cream); border-radius: var(--radius); font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+  .step-tip-icon { flex-shrink: 0; font-size: 0.9rem; }
+
+  /* TEMP BADGE */
+  .temp-badge { display: inline-flex; align-items: center; gap: 5px; background: #fde8e8; color: var(--beef); padding: 3px 10px; border-radius: 20px; font-size: 0.76rem; font-weight: 500; margin-left: 8px; vertical-align: middle; }
+
+  /* NOTES */
+  .recipe-notes { background: var(--cream); padding: 40px 80px; border-top: 1px solid var(--border); }
+  .recipe-notes h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
+  .recipe-notes p { font-size: 0.88rem; line-height: 1.8; color: var(--muted); max-width: 700px; }
+
+  /* MORE */
+  .more-section { padding: 80px; border-top: 1px solid var(--border); }
+  .more-section h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 600; margin-bottom: 36px; }
+  .more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .more-card { text-decoration: none; color: inherit; display: block; transition: transform var(--transition); }
+  .more-card:hover { transform: translateY(-2px); }
+  .more-card-img { aspect-ratio: 4/3; border-radius: var(--radius); margin-bottom: 12px; display: flex; align-items: center; justify-content: center; opacity: 0.5; }
+  .more-card-img svg { width: 36px; height: 36px; }
+  .more-card-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; margin-bottom: 5px; }
+  .more-card-meta { font-size: 0.78rem; color: var(--muted); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 48px 80px; display: flex; align-items: center; justify-content: space-between; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600; color: var(--sage-dark); }
+  .footer-logo span { color: var(--wood); }
+  .footer-links { display: flex; gap: 28px; list-style: none; }
+  .footer-links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; transition: color var(--transition); }
+  .footer-links a:hover { color: var(--charcoal); }
+  .footer-copy { font-size: 0.78rem; color: var(--muted); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px); background: var(--charcoal); color: white; padding: 11px 22px; border-radius: 40px; font-size: 0.84rem; opacity: 0; transition: all 0.25s ease; z-index: 999; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Recip<span>al</span></a>
+  <ul class="nav-links">
+    <li><a href="recipes.html">Recipes</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="login.html" class="btn-ghost">Sign In</a>
+    <a href="login.html#register" class="btn-primary">Join Free</a>
+  </div>
+</nav>
+
+<!-- DEMO BANNER -->
+<div class="demo-banner">
+  <span class="demo-pill">Demo Page</span>
+  This is a demonstration recipe created for the Recipal platform walkthrough.
+</div>
+
+<div class="breadcrumb">
+  <a href="index.html">Home</a><span class="bc-sep">/</span>
+  <a href="recipes.html">Recipes</a><span class="bc-sep">/</span>
+  <span>Reverse-Sear Steak</span>
+</div>
+
+<!-- HERO -->
+<div class="recipe-hero">
+  <div class="recipe-hero-left">
+    <div class="recipe-tags">
+      <span class="tag tag-protein"><span class="tag-dot"></span> Beef</span>
+      <span class="tag tag-cut">Ribeye</span>
+      <span class="tag tag-diff">Medium</span>
+      <span class="tag tag-demo">Demo</span>
+    </div>
+    <h1>Reverse-Sear Steak</h1>
+    <p class="recipe-desc">The reverse-sear method produces a more evenly cooked steak than traditional high-heat searing alone. By gently bringing a thick bone-in ribeye up to temperature in a low oven first, then finishing it in a smoking-hot cast iron pan, you achieve edge-to-edge doneness with a deep, caramelised crust — and a butter baste with garlic and thyme to finish.</p>
+
+    <div class="recipe-meta-row">
+      <div class="meta-item"><div class="meta-label">Prep</div><div class="meta-value">35 min</div></div>
+      <div class="meta-item"><div class="meta-label">Oven</div><div class="meta-value">~1 hour</div></div>
+      <div class="meta-item"><div class="meta-label">Sear</div><div class="meta-value">5 min</div></div>
+      <div class="meta-item"><div class="meta-label">Rest</div><div class="meta-value">10 min</div></div>
+      <div class="meta-item"><div class="meta-label">Serves</div><div class="meta-value" id="servingDisplay">2</div></div>
+    </div>
+
+    <div class="recipe-actions">
+      <div class="rating-row">
+        <div class="rating-stars" id="ratingStars">
+          <span class="rstar on" onclick="rate(1)">★</span>
+          <span class="rstar on" onclick="rate(2)">★</span>
+          <span class="rstar on" onclick="rate(3)">★</span>
+          <span class="rstar on" onclick="rate(4)">★</span>
+          <span class="rstar on" onclick="rate(5)">★</span>
+        </div>
+        <span class="rating-info"><strong>4.8</strong> · 12 ratings</span>
+      </div>
+      <button class="bookmark-btn" id="bookmarkBtn" onclick="toggleBookmark()">
+        <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        Save Recipe
+      </button>
+    </div>
+  </div>
+
+  <div class="recipe-hero-right">
+    <div class="hero-img-placeholder">
+      <div class="hero-img-inner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        <p>Recipe photo</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIDEO -->
+<div class="video-section">
+  <h2>Watch the Technique</h2>
+  <div class="video-wrap">
+    <iframe
+      src="https://www.youtube.com/embed/akO6D_tc0lo"
+      title="Reverse-Sear Steak"
+      allowfullscreen
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+    </iframe>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="recipe-body">
+
+  <!-- LEFT: INGREDIENTS + EQUIPMENT -->
+  <div class="ingredients-col">
+
+    <div class="col-title">Ingredients</div>
+    <div class="servings-control">
+      <span class="servings-label">Serves</span>
+      <button class="servings-btn" onclick="changeServings(-1)">−</button>
+      <span class="servings-num" id="servingsNum">2</span>
+      <button class="servings-btn" onclick="changeServings(1)">+</button>
+    </div>
+    <ul class="ingredient-list" id="ingredientList"></ul>
+
+    <div class="col-title" style="margin-top: 48px;">Kitchen Equipment</div>
+    <ul class="equipment-list">
+      <li class="equipment-item">
+        <span class="eq-name">Cast Iron Skillet (10–12")</span>
+        <a href="https://www.chefsupplies.ca/products/lodge-6-pc-essential-cast-iron-skillet-set" target="_blank" class="eq-link">
+          Shop
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </li>
+      <li class="equipment-item">
+        <span class="eq-name">Instant-Read Thermometer</span>
+        <a href="https://www.chefsupplies.ca" target="_blank" class="eq-link">
+          Shop
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </li>
+      <li class="equipment-item">
+        <span class="eq-name">Wire Rack &amp; Baking Sheet</span>
+        <a href="https://www.chefsupplies.ca" target="_blank" class="eq-link">
+          Shop
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </li>
+      <li class="equipment-item">
+        <span class="eq-name">Tongs</span>
+        <a href="https://www.chefsupplies.ca" target="_blank" class="eq-link">
+          Shop
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </li>
+      <li class="equipment-item">
+        <span class="eq-name">Basting Spoon</span>
+        <a href="https://www.chefsupplies.ca" target="_blank" class="eq-link">
+          Shop
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </li>
+    </ul>
+
+    <!-- CHEF SUPPLIES SPONSOR BLOCK -->
+    <div class="sponsor-block">
+      <div class="sponsor-header">
+        <a href="https://www.chefsupplies.ca" target="_blank" class="sponsor-logo">
+          <div class="sponsor-logo-icon">
+            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg>
+          </div>
+          <span class="sponsor-logo-name">Chef Supplies Co.</span>
+        </a>
+        <span class="sponsor-pill">Proud Sponsor</span>
+      </div>
+      <p>Equipment links are provided by our partner Chef Supplies Co. Every purchase supports independent recipe publishing on Recipal.</p>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: INSTRUCTIONS -->
+  <div class="instructions-col">
+    <div class="col-title">Instructions</div>
+    <ol class="step-list">
+
+      <li class="step-item">
+        <span class="step-num">01</span>
+        <div>
+          <div class="step-title">Salt the steak and bring to room temperature</div>
+          <div class="step-text">Season a 2-inch bone-in ribeye very generously with salt and cracked black pepper on all sides, including the edges. Set it on a wire rack over a baking sheet and leave it uncovered at room temperature for 30 minutes. Salting the meat in advance and allowing it to rest draws moisture to the surface, which then gets reabsorbed — resulting in better moisture retention and a more seasoned interior throughout.</div>
+        </div>
+      </li>
+
+      <li class="step-item">
+        <span class="step-num">02</span>
+        <div>
+          <div class="step-title">Slow-roast in a low oven</div>
+          <div class="step-text">Preheat your oven to 250°F (120°C). Place the steak on the rack in the oven and roast until the internal temperature reaches <span class="temp-badge">115°F / 46°C</span> — approximately 45–60 minutes depending on thickness. The steak will look pale and unappetising at this stage. That is expected. The crust comes entirely from the pan.</div>
+          <div class="step-tip"><span class="step-tip-icon">🌡</span> Check the temperature from the side of the steak, inserting the probe into the thickest part away from the bone.</div>
+        </div>
+      </li>
+
+      <li class="step-item">
+        <span class="step-num">03</span>
+        <div>
+          <div class="step-title">Heat the cast iron until smoking</div>
+          <div class="step-text">Place a cast iron skillet over high heat for 3–4 minutes until it is visibly smoking. Add the leaf lard or a high-smoke-point neutral oil and swirl to coat. The pan must be genuinely hot before the steak goes in — a pan that is too cool will steam the surface rather than sear it, and the crust will not develop properly.</div>
+        </div>
+      </li>
+
+      <li class="step-item">
+        <span class="step-num">04</span>
+        <div>
+          <div class="step-title">Sear and develop the crust</div>
+          <div class="step-text">Carefully place the steak in the centre of the pan. Do not move it. Allow it to sear undisturbed until a deep brown crust has formed on the underside — approximately 1–2 minutes. Because the steak is already close to temperature from the oven, the sear phase is brief and focused entirely on building colour and texture on the exterior.</div>
+        </div>
+      </li>
+
+      <li class="step-item">
+        <span class="step-num">05</span>
+        <div>
+          <div class="step-title">Flip and butter-baste</div>
+          <div class="step-text">Flip the steak once. Reduce heat to medium and add a generous knob of unsalted butter, a whole smashed garlic clove, and a sprig of fresh thyme to the pan. Once the butter begins to foam, tilt the pan toward you and use a spoon to continuously baste the melted butter over the top of the steak for 1–2 minutes. This enriches the crust and infuses the meat with the aromatics.</div>
+        </div>
+      </li>
+
+      <li class="step-item">
+        <span class="step-num">06</span>
+        <div>
+          <div class="step-title">Rest under a butter blanket</div>
+          <div class="step-text">Transfer the steak to a cutting board. Spoon the remaining butter, garlic clove, and thyme sprig from the pan over the top of the steak. Allow it to rest for a minimum of 10 minutes before carving. Resting allows the internal juices to redistribute — cutting too early will result in a significant loss of moisture.</div>
+          <div class="step-tip"><span class="step-tip-icon">⏱</span> Set a timer and step away. 10 minutes is the minimum; 12–15 is better for a steak this size.</div>
+        </div>
+      </li>
+
+      <li class="step-item">
+        <span class="step-num">07</span>
+        <div>
+          <div class="step-title">Carve and serve</div>
+          <div class="step-text">Run your knife down along the bone to separate the meat, then slice the steak into approximately ½-inch (1.2 cm) pieces against the grain. Fan the slices out on a warm plate. Finish with a pinch of flaky sea salt if desired and serve immediately.</div>
+        </div>
+      </li>
+
+    </ol>
+  </div>
+
+</div>
+
+<!-- NOTES -->
+<div class="recipe-notes">
+  <h3>Cook's Notes</h3>
+  <p>The reverse-sear is particularly well-suited to thick cuts — 1.5 inches and above. Thinner steaks cook too quickly in the oven phase to benefit from it. The low oven temperature produces a very gradual, even rise in internal temperature, which means there is almost no overcooked grey band around the edge of the steak. The result is consistent doneness from crust to centre. Leaf lard is the traditional fat of choice for cast iron searing due to its high smoke point and neutral flavour, but refined avocado oil or grapeseed oil are practical alternatives. Avoid butter alone for the initial sear — it will burn before the crust develops.</p>
+</div>
+
+<!-- MORE -->
+<div class="more-section">
+  <h2>More Beef Recipes</h2>
+  <div class="more-grid">
+    <a href="recipe-detail.html" class="more-card">
+      <div class="more-card-img" style="background:#f0e8dc;"><svg viewBox="0 0 24 24" fill="none" stroke="#8B6F47" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div>
+      <div class="more-card-title">Perfect Cast Iron Ribeye</div>
+      <div class="more-card-meta">Beef · Medium · 20m</div>
+    </a>
+    <a href="recipe-detail.html" class="more-card">
+      <div class="more-card-img" style="background:#f0e8dc;"><svg viewBox="0 0 24 24" fill="none" stroke="#8B6F47" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div>
+      <div class="more-card-title">Slow-Braised Short Rib</div>
+      <div class="more-card-meta">Beef · Medium · 3h 20m</div>
+    </a>
+    <a href="recipe-detail.html" class="more-card">
+      <div class="more-card-img" style="background:#f0e8dc;"><svg viewBox="0 0 24 24" fill="none" stroke="#8B6F47" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div>
+      <div class="more-card-title">Classic Beef Wellington</div>
+      <div class="more-card-meta">Beef · Hard · 2h 30m</div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Recip<span>al</span></div>
+  <ul class="footer-links">
+    <li><a href="recipes.html">Recipes</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 Recipal</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE = 2;
+let servings = 2;
+const baseIngredients = [
+  {name:"Bone-in ribeye steak (2\" thick)",qty:1,unit:"steak"},
+  {name:"Flaky sea salt",qty:2,unit:"tsp"},
+  {name:"Black pepper, cracked",qty:1,unit:"tsp"},
+  {name:"Leaf lard or neutral oil",qty:1,unit:"tbsp"},
+  {name:"Unsalted butter",qty:2,unit:"tbsp"},
+  {name:"Garlic clove, smashed",qty:1,unit:"clove"},
+  {name:"Fresh thyme",qty:1,unit:"sprig"},
+];
+
+function renderIngredients() {
+  const m = servings / BASE;
+  document.getElementById('ingredientList').innerHTML = baseIngredients.map(i => {
+    const s = i.qty * m;
+    const d = Number.isInteger(s) ? s : parseFloat(s.toFixed(1));
+    return `<li class="ingredient-item"><span class="ing-name">${i.name}</span><span class="ing-qty">${d} ${i.unit}</span></li>`;
+  }).join('');
+  document.getElementById('servingsNum').textContent = servings;
+  document.getElementById('servingDisplay').textContent = servings;
+}
+
+function changeServings(d) {
+  const n = servings + d;
+  if (n >= 1 && n <= 12) { servings = n; renderIngredients(); }
+}
+
+let bookmarked = false;
+function toggleBookmark() {
+  bookmarked = !bookmarked;
+  const b = document.getElementById('bookmarkBtn');
+  b.classList.toggle('saved', bookmarked);
+  b.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>${bookmarked ? 'Saved' : 'Save Recipe'}`;
+  toast(bookmarked ? '🔖 Recipe saved to your collection' : 'Bookmark removed');
+}
+
+function rate(n) {
+  document.querySelectorAll('.rstar').forEach((s, i) => s.classList.toggle('on', i < n));
+  toast(`⭑ You rated this ${n} out of 5`);
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+renderIngredients();
+</script>
+</body>
+</html>
