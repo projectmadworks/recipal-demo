@@ -263,21 +263,23 @@ function render(){
   });
   document.getElementById('resultsCount').textContent=list.length;
   if(!list.length){grid.innerHTML=`<div class="no-results"><h3>No recipes found</h3><p>Try adjusting your filters or search term.</p></div>`;return;}
-  grid.innerHTML=list.map(r=>`
-    <a href="${r.url||'recipe-detail.html'}" class="recipe-card">
+  grid.innerHTML=list.map(r=>{
+    const href=r.url||'recipe-detail.html';
+    const demoBadge=r.demo?'<div class="demo-tag">Demo</div>':'';
+    return `<a href="${href}" class="recipe-card">
       <div class="recipe-card-img" style="background:${r.bg};">
         <div class="img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="${pColors[r.protein]}" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div>
         <div class="protein-tag"><span class="protein-dot ${pDot[r.protein]}"></span>${cap(r.protein)}</div>
         <div class="cut-tag">${cap(r.cut)}</div>
         <div class="diff-tag ${dClass[r.difficulty]}">${cap(r.difficulty)}</div>
-        ${r.demo?'<div class="demo-tag">Demo</div>':''}
-        ${r.demo ? '<div class="demo-tag">Demo</div>' : ''}
+        ${demoBadge}
         <button class="card-bm${r.saved?' saved':''}" onclick="toggleSave(event,${r.id})"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
       </div>
       <div class="card-title">${r.title}</div>
       <div class="card-meta"><span>⏱ ${r.time}</span><span>🍽 ${r.servings} servings</span></div>
       <div class="card-stars">${stars(r.rating)}<span class="star-count">(${r.rc})</span></div>
-    </a>`).join('');
+    </a>`;
+  }).join('');
 }
 
 function toggleSave(e,id){
