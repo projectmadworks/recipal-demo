@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recipal — Recipes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #7C9070; --sage-light: #A8BC9E; --sage-dark: #4E6145;
+    --cream: #F5F0E8; --wood: #8B6F47; --wood-light: #C4A882;
+    --charcoal: #2C2C2C; --warm-white: #FDFAF5; --muted: #7A7468;
+    --border: rgba(0,0,0,0.08);
+    --beef: #C0392B; --chicken: #D4A017; --pork: #E8879C; --seafood: #4A90C4;
+    --radius: 4px; --transition: 0.2s ease;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--warm-white); color: var(--charcoal); font-weight: 300; }
+
+  /* NAV */
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 72px; border-bottom: 1px solid var(--border); background: var(--warm-white); position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 600; color: var(--sage-dark); text-decoration: none; letter-spacing: -0.02em; }
+  .nav-logo span { color: var(--wood); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; transition: color var(--transition); }
+  .nav-links a:hover, .nav-links a.active { color: var(--sage-dark); }
+  .nav-actions { display: flex; gap: 10px; }
+  .btn-ghost { display: inline-flex; align-items: center; padding: 8px 18px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 0.84rem; cursor: pointer; text-decoration: none; border-radius: var(--radius); transition: all var(--transition); }
+  .btn-ghost:hover { color: var(--charcoal); border-color: rgba(0,0,0,0.18); }
+  .btn-primary { display: inline-flex; align-items: center; padding: 8px 18px; background: var(--sage-dark); color: white; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; font-weight: 500; cursor: pointer; text-decoration: none; border: none; border-radius: var(--radius); transition: background var(--transition); }
+  .btn-primary:hover { background: var(--sage); }
+
+  /* PAGE HEADER */
+  .page-header { padding: 60px 80px 48px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; }
+  .page-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 600; margin-bottom: 8px; }
+  .page-header p { font-size: 0.95rem; color: var(--muted); }
+  .search-box { display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); background: white; padding: 0 18px; width: 340px; height: 48px; border-radius: var(--radius); flex-shrink: 0; transition: border-color var(--transition), box-shadow var(--transition); }
+  .search-box:focus-within { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(124,144,112,0.12); }
+  .search-box svg { color: var(--muted); flex-shrink: 0; width: 18px; height: 18px; }
+  .search-box input { border: none; background: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--charcoal); width: 100%; }
+  .search-box input::placeholder { color: var(--muted); }
+
+  /* FILTER BAR */
+  .filter-bar { padding: 0 80px; border-bottom: 1px solid var(--border); background: var(--warm-white); position: sticky; top: 72px; z-index: 90; }
+  .filter-row { display: flex; align-items: stretch; height: 56px; overflow-x: auto; }
+  .filter-group { display: flex; align-items: stretch; border-right: 1px solid var(--border); }
+  .filter-group:last-child { border-right: none; }
+  .filter-group-label { display: flex; align-items: center; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 500; padding: 0 16px 0 0; white-space: nowrap; }
+  .filter-btn { height: 100%; padding: 0 16px; border: none; background: none; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; color: var(--muted); cursor: pointer; transition: all var(--transition); display: flex; align-items: center; gap: 6px; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .filter-btn:hover { color: var(--charcoal); background: var(--cream); }
+  .filter-btn.active { color: var(--charcoal); font-weight: 500; border-bottom-color: var(--sage-dark); }
+  .filter-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-beef { background: var(--beef); } .dot-chicken { background: var(--chicken); } .dot-pork { background: var(--pork); } .dot-seafood { background: var(--seafood); }
+
+  /* SAVED TOGGLE — stands apart in the filter bar */
+  .saved-toggle { display: flex; align-items: center; gap: 8px; height: 100%; padding: 0 20px; border: none; background: none; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; color: var(--muted); cursor: pointer; transition: all var(--transition); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; margin-left: auto; border-left: 1px solid var(--border); }
+  .saved-toggle svg { width: 14px; height: 14px; fill: none; stroke: var(--muted); stroke-width: 2; transition: all var(--transition); }
+  .saved-toggle:hover { color: var(--sage-dark); }
+  .saved-toggle:hover svg { stroke: var(--sage-dark); }
+  .saved-toggle.active { color: var(--sage-dark); font-weight: 500; border-bottom-color: var(--sage-dark); }
+  .saved-toggle.active svg { fill: var(--sage-dark); stroke: var(--sage-dark); }
+
+  /* PROTEIN INFO BUTTON */
+  .filter-info { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: var(--cream); border: 1px solid var(--border); font-size: 0.65rem; font-weight: 700; color: var(--muted); cursor: pointer; margin-left: 2px; transition: all var(--transition); flex-shrink: 0; }
+  .filter-info:hover { background: var(--sage-light); color: white; border-color: var(--sage-light); }
+
+  /* RESULTS */
+  .results-bar { padding: 24px 80px 0; display: flex; align-items: center; justify-content: space-between; }
+  .results-meta { font-size: 0.82rem; color: var(--muted); }
+  .results-meta strong { color: var(--charcoal); font-weight: 500; }
+  .clear-btn { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: var(--sage-dark); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
+
+  /* GRID */
+  .recipes-grid { padding: 24px 80px 80px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 0; }
+  .recipe-card { text-decoration: none; color: inherit; display: block; transition: transform var(--transition); }
+  .recipe-card:hover { transform: translateY(-3px); }
+  .recipe-card-img { aspect-ratio: 4/3; border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; }
+  .img-ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0.22; }
+  .img-ph svg { width: 44px; height: 44px; }
+  .protein-tag { position: absolute; top: 12px; left: 12px; display: flex; align-items: center; gap: 6px; background: white; padding: 4px 10px 4px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 500; cursor: pointer; }
+  .protein-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .cut-tag { position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.5); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; cursor: pointer; }
+  .diff-tag { position: absolute; top: 12px; right: 12px; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 500; }
+  .diff-easy { background: #e8f4e8; color: #3a6b3a; }
+  .diff-medium { background: #fef8e7; color: #7a5c00; }
+  .diff-hard { background: #fde8e8; color: #8b2020; }
+  .card-bm { position: absolute; bottom: 12px; right: 12px; width: 32px; height: 32px; background: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 6px rgba(0,0,0,0.12); transition: all var(--transition); z-index: 2; }
+  .card-bm:hover { transform: scale(1.1); }
+  .card-bm svg { width: 14px; height: 14px; fill: none; stroke: var(--muted); stroke-width: 2; transition: all var(--transition); }
+  .card-bm.saved svg { fill: var(--sage-dark); stroke: var(--sage-dark); }
+  .demo-tag { position: absolute; bottom: 46px; right: 12px; background: var(--sage-dark); color: white; padding: 3px 9px; border-radius: 20px; font-size: 0.66rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 600; line-height: 1.3; margin-bottom: 8px; }
+  .card-meta { font-size: 0.8rem; color: var(--muted); display: flex; gap: 14px; margin-bottom: 6px; }
+  .card-stars { display: flex; align-items: center; gap: 2px; }
+  .star { font-size: 0.8rem; color: #d4c5a0; }
+  .star.on { color: var(--wood); }
+  .star-count { font-size: 0.74rem; color: var(--muted); margin-left: 4px; }
+  .no-results { grid-column: 1/-1; text-align: center; padding: 80px 0; }
+  .no-results h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 10px; }
+  .no-results p { font-size: 0.9rem; color: var(--muted); }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 500; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--warm-white); border-radius: 8px; box-shadow: 0 12px 48px rgba(0,0,0,0.14); max-width: 480px; width: 92%; max-height: 90vh; overflow-y: auto; padding: 48px; position: relative; animation: mIn .2s ease; }
+  @keyframes mIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+  .modal-close { position: absolute; top: 14px; right: 18px; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted); line-height: 1; }
+  .modal-close:hover { color: var(--charcoal); }
+  .modal-eyebrow { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--wood); font-weight: 500; margin-bottom: 8px; }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 600; margin-bottom: 4px; }
+  .modal-sub { font-size: 0.84rem; color: var(--muted); margin-bottom: 20px; }
+  .modal-bar { height: 3px; border-radius: 2px; margin-bottom: 28px; }
+  .modal-section { margin-bottom: 22px; }
+  .modal-section h4 { font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+  .modal-section p { font-size: 0.88rem; line-height: 1.78; color: var(--charcoal); }
+  .modal-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .modal-tag { background: var(--cream); padding: 4px 12px; border-radius: 20px; font-size: 0.76rem; color: var(--muted); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 48px 80px; display: flex; align-items: center; justify-content: space-between; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600; color: var(--sage-dark); }
+  .footer-logo span { color: var(--wood); }
+  .footer-links { display: flex; gap: 28px; list-style: none; }
+  .footer-links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; transition: color var(--transition); }
+  .footer-links a:hover { color: var(--charcoal); }
+  .footer-copy { font-size: 0.78rem; color: var(--muted); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px); background: var(--charcoal); color: white; padding: 11px 22px; border-radius: 40px; font-size: 0.84rem; opacity: 0; transition: all 0.25s ease; z-index: 999; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Recip<span>al</span></a>
+  <ul class="nav-links">
+    <li><a href="recipes.html" class="active">Recipes</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="login.html" class="btn-ghost">Sign In</a>
+    <a href="login.html#register" class="btn-primary">Join Free</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div>
+    <h1>All Recipes</h1>
+    <p>Filter by protein, cut, or difficulty — or search by name.</p>
+  </div>
+  <div class="search-box">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Search recipes…">
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-row">
+
+    <div class="filter-group" style="padding-right:0;gap:0;">
+      <span class="filter-group-label" style="padding-left:0;">Protein</span>
+      <button class="filter-btn active" data-f="protein" data-v="all">All</button>
+      <button class="filter-btn" data-f="protein" data-v="beef"><span class="filter-dot dot-beef"></span>Beef <span class="filter-info" onclick="openModal(event,'protein','beef')">i</span></button>
+      <button class="filter-btn" data-f="protein" data-v="chicken"><span class="filter-dot dot-chicken"></span>Chicken <span class="filter-info" onclick="openModal(event,'protein','chicken')">i</span></button>
+      <button class="filter-btn" data-f="protein" data-v="pork"><span class="filter-dot dot-pork"></span>Pork <span class="filter-info" onclick="openModal(event,'protein','pork')">i</span></button>
+      <button class="filter-btn" data-f="protein" data-v="seafood"><span class="filter-dot dot-seafood"></span>Seafood <span class="filter-info" onclick="openModal(event,'protein','seafood')">i</span></button>
+    </div>
+
+    <div class="filter-group" style="padding:0 0 0 24px;gap:0;">
+      <span class="filter-group-label">Difficulty</span>
+      <button class="filter-btn active" data-f="difficulty" data-v="all">All</button>
+      <button class="filter-btn" data-f="difficulty" data-v="easy">Easy</button>
+      <button class="filter-btn" data-f="difficulty" data-v="medium">Medium</button>
+      <button class="filter-btn" data-f="difficulty" data-v="hard">Hard</button>
+    </div>
+
+    <div class="filter-group" style="padding:0 0 0 24px;gap:0;">
+      <span class="filter-group-label">Cut</span>
+      <button class="filter-btn active" data-f="cut" data-v="all">All</button>
+      <button class="filter-btn" data-f="cut" data-v="ribeye">Ribeye <span class="filter-info" onclick="openModal(event,'cut','Ribeye')">i</span></button>
+      <button class="filter-btn" data-f="cut" data-v="shortrib">Short Rib <span class="filter-info" onclick="openModal(event,'cut','Short Rib')">i</span></button>
+      <button class="filter-btn" data-f="cut" data-v="tenderloin">Tenderloin <span class="filter-info" onclick="openModal(event,'cut','Tenderloin')">i</span></button>
+      <button class="filter-btn" data-f="cut" data-v="thigh">Thigh <span class="filter-info" onclick="openModal(event,'cut','Thigh')">i</span></button>
+      <button class="filter-btn" data-f="cut" data-v="breast">Breast</button>
+      <button class="filter-btn" data-f="cut" data-v="shoulder">Shoulder <span class="filter-info" onclick="openModal(event,'cut','Shoulder')">i</span></button>
+      <button class="filter-btn" data-f="cut" data-v="salmon">Salmon <span class="filter-info" onclick="openModal(event,'cut','Salmon')">i</span></button>
+      <button class="filter-btn" data-f="cut" data-v="shrimp">Shrimp</button>
+    </div>
+
+    <button class="saved-toggle" id="savedToggle" onclick="toggleSaved()">
+      <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      Saved Only
+    </button>
+
+  </div>
+</div>
+
+<div class="results-bar">
+  <div class="results-meta">Showing <strong id="resultsCount">12</strong> recipes</div>
+  <button class="clear-btn" onclick="clearAll()">Clear all filters</button>
+</div>
+
+<div class="recipes-grid" id="recipeGrid"></div>
+
+<!-- INFO MODAL -->
+<div class="modal-overlay" id="infoModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('infoModal').classList.remove('open')">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Recip<span>al</span></div>
+  <ul class="footer-links">
+    <li><a href="recipes.html">Recipes</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 Recipal</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const recipes = [
+  {id:1,title:"Slow-Braised Short Rib with Rosemary Jus",protein:"beef",cut:"shortrib",difficulty:"medium",time:"3h 20m",servings:4,bg:"#f0e8dc",rating:4,rc:24,saved:false},
+  {id:2,title:"Perfect Cast Iron Ribeye",protein:"beef",cut:"ribeye",difficulty:"medium",time:"20m",servings:2,bg:"#f0e8dc",rating:5,rc:58,saved:true},
+  {id:3,title:"Classic Beef Wellington",protein:"beef",cut:"tenderloin",difficulty:"hard",time:"2h 30m",servings:6,bg:"#f0e8dc",rating:4,rc:31,saved:false},
+  {id:4,title:"Lemon Herb Roast Chicken Thighs",protein:"chicken",cut:"thigh",difficulty:"easy",time:"45m",servings:4,bg:"#fdf4dc",rating:5,rc:41,saved:true},
+  {id:5,title:"Chicken Piccata with Capers & White Wine",protein:"chicken",cut:"breast",difficulty:"medium",time:"1h",servings:4,bg:"#fdf4dc",rating:4,rc:19,saved:false},
+  {id:6,title:"Thai Basil Chicken Stir-Fry",protein:"chicken",cut:"breast",difficulty:"easy",time:"25m",servings:2,bg:"#fdf4dc",rating:4,rc:22,saved:false},
+  {id:7,title:"Honey Garlic Pork Tenderloin",protein:"pork",cut:"tenderloin",difficulty:"easy",time:"35m",servings:3,bg:"#fde8ee",rating:4,rc:18,saved:false},
+  {id:8,title:"Pulled Pork Shoulder with Slaw",protein:"pork",cut:"shoulder",difficulty:"medium",time:"5h",servings:8,bg:"#fde8ee",rating:5,rc:37,saved:true},
+  {id:9,title:"Pan-Seared Salmon with Dill Butter",protein:"seafood",cut:"salmon",difficulty:"easy",time:"20m",servings:2,bg:"#deeef8",rating:5,rc:29,saved:false},
+  {id:10,title:"Garlic Butter Shrimp Scampi",protein:"seafood",cut:"shrimp",difficulty:"easy",time:"15m",servings:2,bg:"#deeef8",rating:5,rc:45,saved:true},
+  {id:11,title:"Balsamic Glazed Beef Short Rib Tacos",protein:"beef",cut:"shortrib",difficulty:"medium",time:"4h",servings:6,bg:"#f0e8dc",rating:4,rc:14,saved:false},
+  {id:12,title:"Miso-Glazed Salmon with Sesame Rice",protein:"seafood",cut:"salmon",difficulty:"easy",time:"30m",servings:2,bg:"#deeef8",rating:5,rc:33,saved:false},
+  {id:13,title:"Reverse-Sear Steak (DEMO)",protein:"beef",cut:"ribeye",difficulty:"medium",time:"1h 45m",servings:2,bg:"#f0e8dc",rating:5,rc:12,saved:false,url:"reverse-sear.html",demo:true},
+];
+
+const pColors = {beef:'#C0392B',chicken:'#D4A017',pork:'#E8879C',seafood:'#4A90C4'};
+const pDot = {beef:'dot-beef',chicken:'dot-chicken',pork:'dot-pork',seafood:'dot-seafood'};
+const dClass = {easy:'diff-easy',medium:'diff-medium',hard:'diff-hard'};
+let F = {protein:'all',difficulty:'all',cut:'all',saved:false,q:''};
+
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function stars(n){return[1,2,3,4,5].map(i=>`<span class="star${i<=n?' on':''}">\u2605</span>`).join('');}
+
+function render(){
+  const grid=document.getElementById('recipeGrid');
+  const list=recipes.filter(r=>{
+    if(F.protein!=='all'&&r.protein!==F.protein)return false;
+    if(F.difficulty!=='all'&&r.difficulty!==F.difficulty)return false;
+    if(F.cut!=='all'&&r.cut!==F.cut)return false;
+    if(F.saved&&!r.saved)return false;
+    if(F.q&&!r.title.toLowerCase().includes(F.q))return false;
+    return true;
+  });
+  document.getElementById('resultsCount').textContent=list.length;
+  if(!list.length){grid.innerHTML=`<div class="no-results"><h3>No recipes found</h3><p>Try adjusting your filters or search term.</p></div>`;return;}
+  grid.innerHTML=list.map(r=>`
+    <a href="${r.url||'recipe-detail.html'}" class="recipe-card">
+      <div class="recipe-card-img" style="background:${r.bg};">
+        <div class="img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="${pColors[r.protein]}" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div>
+        <div class="protein-tag"><span class="protein-dot ${pDot[r.protein]}"></span>${cap(r.protein)}</div>
+        <div class="cut-tag">${cap(r.cut)}</div>
+        <div class="diff-tag ${dClass[r.difficulty]}">${cap(r.difficulty)}</div>
+        ${r.demo?'<div class="demo-tag">Demo</div>':''}
+        ${r.demo ? '<div class="demo-tag">Demo</div>' : ''}
+        <button class="card-bm${r.saved?' saved':''}" onclick="toggleSave(event,${r.id})"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+      </div>
+      <div class="card-title">${r.title}</div>
+      <div class="card-meta"><span>⏱ ${r.time}</span><span>🍽 ${r.servings} servings</span></div>
+      <div class="card-stars">${stars(r.rating)}<span class="star-count">(${r.rc})</span></div>
+    </a>`).join('');
+}
+
+function toggleSave(e,id){
+  e.preventDefault();e.stopPropagation();
+  const r=recipes.find(x=>x.id===id);
+  if(r){r.saved=!r.saved;render();toast(r.saved?'🔖 Recipe saved':'Bookmark removed');}
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const type=btn.dataset.f,val=btn.dataset.v;
+    if(!type||!val)return;
+    document.querySelectorAll(`.filter-btn[data-f="${type}"]`).forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    F[type]=val;
+    render();
+  });
+});
+
+function toggleSaved(){
+  F.saved=!F.saved;
+  document.getElementById('savedToggle').classList.toggle('active',F.saved);
+  render();
+}
+
+function clearAll(){
+  F={protein:'all',difficulty:'all',cut:'all',saved:false,q:''};
+  document.querySelectorAll('.filter-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.v==='all');
+  });
+  document.getElementById('savedToggle').classList.remove('active');
+  document.getElementById('searchInput').value='';
+  render();
+}
+
+document.getElementById('searchInput').addEventListener('input',e=>{F.q=e.target.value.toLowerCase();render();});
+
+// URL param from homepage protein strip
+const params=new URLSearchParams(window.location.search);
+if(params.get('protein')){
+  const v=params.get('protein');F.protein=v;
+  document.querySelectorAll('.filter-btn[data-f="protein"]').forEach(b=>b.classList.toggle('active',b.dataset.v===v));
+}
+
+// INFO MODAL DATA
+const proteinData={
+  beef:{name:'Beef',sub:'Cattle — Bos taurus',color:'#C0392B',overview:'Beef is prized for its rich marbling and deep umami flavour. Different cuts vary enormously in fat content, texture, and the cooking method they respond to best.',cooking:'High-heat methods (searing, grilling) for tender, well-marbled cuts like ribeye and tenderloin. Low and slow (braising, smoking) for tougher, collagen-rich cuts like short rib, chuck, and brisket. Always rest after cooking.',cuts:['Ribeye','Short Rib','Tenderloin','Chuck','Brisket','Sirloin','Flank']},
+  chicken:{name:'Chicken',sub:'Domestic fowl — Gallus domesticus',color:'#D4A017',overview:'Chicken is the world\'s most widely consumed protein. Its mild flavour is a canvas for bold seasoning, and different cuts vary dramatically in fat, texture, and the heat they can tolerate.',cooking:'White meat (breast) dries out quickly — brine first or use lower heat. Dark meat (thigh, leg) is far more forgiving and benefits from roasting, braising, or grilling. Always cook to 165°F (74°C) internal.',cuts:['Breast','Thigh','Drumstick','Wing','Whole Bird']},
+  pork:{name:'Pork',sub:'Domestic pig — Sus domesticus',color:'#E8879C',overview:'Often called "the other white meat," pork spans from the lean, quick-cooking tenderloin to the richly marbled shoulder and belly — two very different proteins with very different ideal methods.',cooking:'Tenderloin: quick, high heat, pull at 145°F. Shoulder and belly: long and slow — smoke, braise, or slow-roast for 6–10 hours at low temp. Pork loves bold seasoning: citrus, spice, herbs.',cuts:['Tenderloin','Shoulder','Belly','Ribs','Loin Chop','Jowl']},
+  seafood:{name:'Seafood',sub:'Ocean & freshwater species',color:'#4A90C4',overview:'Seafood is the most time-sensitive of all proteins — freshness is everything. It spans from richly oily cold-water fish like salmon to delicate shellfish that need only seconds of heat.',cooking:'Most seafood overcooks very easily. Salmon: medium-high heat, skin down, pull at 125°F. Shrimp: 2–3 minutes total, pink and curled is done. Mussels and clams: steam until they open — that\'s your timer.',cuts:['Salmon','Shrimp','Scallops','Tuna','Halibut','Cod','Mussels']},
+};
+const cutData={
+  'Ribeye':{protein:'Beef',color:'#C0392B',location:'Upper rib section, between ribs 6–12',flavour:'Intensely marbled with intramuscular fat — the most flavourful beef cut. Rich, buttery, and deeply savoury.',cooking:'Cast iron, grill, or broiler at very high heat. Target 130°F (54°C) for medium-rare. Rest 5 min before slicing.'},
+  'Short Rib':{protein:'Beef',color:'#C0392B',location:'Lower rib cage, along the chuck and plate',flavour:'High in fat and collagen. Deeply rich and gelatinous when braised — one of the most rewarding beef cuts.',cooking:'Low and slow only. Braise 3–4 hours at 300°F or sous vide 165°F for 24 hours. Not suited to quick cooking.'},
+  'Tenderloin':{protein:'Beef / Pork',color:'#8B6F47',location:'Along the spine, inside the loin — the least-worked muscle',flavour:'Extremely lean and tender. Mild in flavour compared to more marbled cuts.',cooking:'Quick, dry heat only. Sear and roast. Never braise — the lack of collagen means there\'s nothing for moisture to soften.'},
+  'Thigh':{protein:'Chicken',color:'#D4A017',location:'Upper leg, below the hip joint',flavour:'Dark meat with more fat and myoglobin. Richer, juicier than breast with far more margin for error.',cooking:'Roast, braise, grill, or pan-sear. Skin-on thighs render fat beautifully. Pull at 165°F internal.'},
+  'Shoulder':{protein:'Pork',color:'#E8879C',location:'Front leg and neck area — heavily worked muscle',flavour:'Well-marbled with fat and collagen. Full flavour, becomes meltingly tender with long cooking.',cooking:'Smoke, braise, or slow-roast at 225–275°F for 8–12 hours. Internal 195–205°F for true pull-apart texture.'},
+  'Salmon':{protein:'Seafood',color:'#4A90C4',location:'Oily cold-water fish — Atlantic or Pacific',flavour:'Rich in omega-3 fatty acids. Full, buttery flavour with silky texture. Skin crisps beautifully when seared properly.',cooking:'Dry skin thoroughly. Pan-sear skin-down on medium-high until 70% cooked through, flip briefly. Pull at 125°F for medium.'},
+};
+
+function openModal(e,type,key){
+  e.stopPropagation();
+  const content=document.getElementById('modalContent');
+  if(type==='protein'){
+    const d=proteinData[key];if(!d)return;
+    content.innerHTML=`<div class="modal-eyebrow">Protein Guide</div><div class="modal-title">${d.name}</div><div class="modal-sub">${d.sub}</div><div class="modal-bar" style="background:${d.color};"></div><div class="modal-section"><h4>Overview</h4><p>${d.overview}</p></div><div class="modal-section"><h4>Cooking characteristics</h4><p>${d.cooking}</p></div><div class="modal-section"><h4>Common cuts</h4><div class="modal-tags">${d.cuts.map(c=>`<span class="modal-tag">${c}</span>`).join('')}</div></div>`;
+  } else {
+    const d=cutData[key];if(!d)return;
+    content.innerHTML=`<div class="modal-eyebrow">Cut Guide · ${d.protein}</div><div class="modal-title">${key}</div><div class="modal-sub">Location on the animal</div><div class="modal-bar" style="background:${d.color};"></div><div class="modal-section"><h4>Where it comes from</h4><p>${d.location}</p></div><div class="modal-section"><h4>Flavour & texture</h4><p>${d.flavour}</p></div><div class="modal-section"><h4>Best cooking method</h4><p>${d.cooking}</p></div>`;
+  }
+  document.getElementById('infoModal').classList.add('open');
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+render();
+</script>
+</body>
+</html>
