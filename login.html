@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recipal — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #7C9070; --sage-light: #A8BC9E; --sage-dark: #4E6145;
+    --cream: #F5F0E8; --wood: #8B6F47; --charcoal: #2C2C2C;
+    --warm-white: #FDFAF5; --muted: #7A7468; --border: rgba(0,0,0,0.08);
+    --radius: 4px; --transition: 0.22s ease;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--warm-white); color: var(--charcoal); font-weight: 300; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* NAV */
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 72px; border-bottom: 1px solid var(--border); background: var(--warm-white); }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 600; color: var(--sage-dark); text-decoration: none; letter-spacing: -0.02em; }
+  .nav-logo span { color: var(--wood); }
+  .nav-back { font-size: 0.84rem; color: var(--muted); text-decoration: none; transition: color var(--transition); }
+  .nav-back:hover { color: var(--charcoal); }
+
+  /* LAYOUT */
+  .auth-layout { flex: 1; display: grid; grid-template-columns: 1fr 1.1fr; }
+
+  /* LEFT */
+  .auth-left { background: var(--sage-dark); color: white; padding: 72px 64px; display: flex; flex-direction: column; justify-content: space-between; }
+  .auth-left-eyebrow { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage-light); margin-bottom: 16px; font-weight: 500; }
+  .auth-left h2 { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 600; line-height: 1.15; margin-bottom: 18px; }
+  .auth-left h2 em { font-style: italic; color: var(--sage-light); }
+  .auth-left-sub { font-size: 0.95rem; line-height: 1.8; color: rgba(255,255,255,0.65); max-width: 340px; margin-bottom: 48px; }
+  .auth-benefits { display: flex; flex-direction: column; gap: 20px; }
+  .auth-benefit { display: flex; align-items: flex-start; gap: 14px; }
+  .benefit-icon { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+  .benefit-text strong { color: white; font-size: 0.88rem; display: block; margin-bottom: 2px; }
+  .benefit-text span { font-size: 0.82rem; color: rgba(255,255,255,0.6); line-height: 1.5; }
+  .auth-left-foot { font-size: 0.76rem; color: rgba(255,255,255,0.38); }
+
+  /* RIGHT */
+  .auth-right { padding: 72px 80px; display: flex; flex-direction: column; justify-content: center; }
+  .auth-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+  .auth-tab { padding: 12px 28px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 400; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all var(--transition); margin-bottom: -1px; }
+  .auth-tab:hover { color: var(--charcoal); }
+  .auth-tab.active { color: var(--sage-dark); font-weight: 500; border-bottom-color: var(--sage-dark); }
+
+  /* PANELS */
+  .auth-panel { display: none; max-width: 420px; }
+  .auth-panel.active { display: block; }
+  .auth-panel h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 600; margin-bottom: 8px; }
+  .auth-panel .sub { font-size: 0.88rem; color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
+
+  /* FORM */
+  .auth-form { display: flex; flex-direction: column; gap: 18px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .field input { font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 300; color: var(--charcoal); background: white; border: 1px solid var(--border); padding: 11px 14px; outline: none; transition: border-color var(--transition), box-shadow var(--transition); border-radius: var(--radius); }
+  .field input:focus { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(124,144,112,0.12); }
+  .forgot { font-size: 0.8rem; color: var(--muted); text-decoration: none; text-align: right; display: block; }
+  .forgot:hover { color: var(--sage-dark); }
+
+  /* ROLE SELECT */
+  .role-row { display: flex; gap: 10px; }
+  .role-opt { flex: 1; padding: 13px 10px; border: 2px solid var(--border); background: white; cursor: pointer; transition: all var(--transition); text-align: center; font-family: 'DM Sans', sans-serif; border-radius: var(--radius); }
+  .role-opt:hover { border-color: var(--sage-light); }
+  .role-opt.active { border-color: var(--sage-dark); background: #f0f4ee; }
+  .role-icon { font-size: 1.2rem; display: block; margin-bottom: 6px; }
+  .role-name { font-size: 0.82rem; font-weight: 500; color: var(--charcoal); display: block; }
+  .role-desc { font-size: 0.7rem; color: var(--muted); display: block; margin-top: 2px; }
+
+  /* SUBMIT */
+  .auth-submit { width: 100%; padding: 13px; background: var(--sage-dark); color: white; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; border-radius: var(--radius); transition: background var(--transition); margin-top: 4px; }
+  .auth-submit:hover { background: var(--sage); }
+  .auth-switch { font-size: 0.84rem; color: var(--muted); margin-top: 4px; }
+  .auth-switch a { color: var(--sage-dark); text-decoration: none; border-bottom: 1px solid var(--sage-light); }
+
+  /* SUCCESS */
+  .auth-success { display: none; max-width: 420px; text-align: center; padding: 48px 0; }
+  .success-check { width: 56px; height: 56px; border-radius: 50%; background: var(--sage-dark); color: white; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+  .auth-success h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 600; margin-bottom: 10px; }
+  .auth-success p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; margin-bottom: 28px; }
+  .btn-success { display: inline-flex; align-items: center; padding: 12px 28px; background: var(--sage-dark); color: white; text-decoration: none; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; border-radius: var(--radius); transition: background var(--transition); }
+  .btn-success:hover { background: var(--sage); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px); background: var(--charcoal); color: white; padding: 11px 22px; border-radius: 40px; font-size: 0.84rem; opacity: 0; transition: all 0.25s ease; z-index: 999; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Recip<span>al</span></a>
+  <a href="index.html" class="nav-back">← Back to site</a>
+</nav>
+
+<div class="auth-layout">
+
+  <div class="auth-left">
+    <div>
+      <p class="auth-left-eyebrow">Welcome to Recipal</p>
+      <h2>Your kitchen,<br><em>elevated.</em></h2>
+      <p class="auth-left-sub">Create a free account to save your favourite recipes, rate what you've cooked, and build a personal collection.</p>
+      <div class="auth-benefits">
+        <div class="auth-benefit">
+          <div class="benefit-icon">🔖</div>
+          <div class="benefit-text"><strong>Save &amp; Bookmark</strong><span>Save any recipe to your personal collection and access it anywhere.</span></div>
+        </div>
+        <div class="auth-benefit">
+          <div class="benefit-icon">⭑</div>
+          <div class="benefit-text"><strong>Rate Recipes</strong><span>Leave ratings to help the community discover the best dishes.</span></div>
+        </div>
+        <div class="auth-benefit">
+          <div class="benefit-icon">🏷</div>
+          <div class="benefit-text"><strong>Promo Codes</strong><span>Unlock exclusive discounts on kitchen equipment from our partners.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="auth-left-foot">Free to join. No credit card required.</div>
+  </div>
+
+  <div class="auth-right">
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchTab('register')">Create Account</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="auth-panel active" id="panel-login">
+      <h3>Welcome back</h3>
+      <p class="sub">Sign in to access your saved recipes and ratings.</p>
+      <div class="auth-form">
+        <div class="field"><label>Email address</label><input type="email" placeholder="you@example.com"></div>
+        <div class="field"><label>Password</label><input type="password" placeholder="••••••••"></div>
+        <a href="#" class="forgot">Forgot password?</a>
+        <button class="auth-submit" onclick="handleLogin()">Sign In</button>
+        <p class="auth-switch">No account? <a href="#" onclick="switchTab('register')">Create one free</a></p>
+      </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-panel" id="panel-register">
+      <h3>Create your account</h3>
+      <p class="sub">Join Recipal free — save recipes, rate dishes, and unlock member perks.</p>
+      <div class="auth-form">
+        <div class="form-row">
+          <div class="field"><label>First name</label><input type="text" placeholder="Jane"></div>
+          <div class="field"><label>Last name</label><input type="text" placeholder="Smith"></div>
+        </div>
+        <div class="field"><label>Email address</label><input type="email" placeholder="you@example.com"></div>
+        <div class="field"><label>Password</label><input type="password" placeholder="Min. 8 characters"></div>
+        <div class="field">
+          <label>I am joining as</label>
+          <div class="role-row">
+            <button class="role-opt active" onclick="selectRole(this)">
+              <span class="role-icon">👤</span>
+              <span class="role-name">Home Cook</span>
+              <span class="role-desc">Save &amp; rate recipes</span>
+            </button>
+            <button class="role-opt" onclick="selectRole(this)">
+              <span class="role-icon">👨‍🍳</span>
+              <span class="role-name">Team Member</span>
+              <span class="role-desc">Add &amp; manage recipes</span>
+            </button>
+            <button class="role-opt" onclick="selectRole(this)">
+              <span class="role-icon">⚙️</span>
+              <span class="role-name">Admin</span>
+              <span class="role-desc">Full platform access</span>
+            </button>
+          </div>
+        </div>
+        <button class="auth-submit" onclick="handleRegister()">Create Free Account</button>
+        <p class="auth-switch">Already have an account? <a href="#" onclick="switchTab('login')">Sign in</a></p>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="auth-success" id="auth-success">
+      <div class="success-check">✓</div>
+      <h3>You're in!</h3>
+      <p>Your account has been created successfully. Head to the recipes to start building your collection.</p>
+      <a href="recipes.html" class="btn-success">Browse Recipes →</a>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='register')));
+  document.getElementById('panel-login').classList.toggle('active',tab==='login');
+  document.getElementById('panel-register').classList.toggle('active',tab==='register');
+  document.getElementById('auth-success').style.display='none';
+}
+function selectRole(btn){document.querySelectorAll('.role-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+function handleLogin(){toast('Signing you in…');setTimeout(()=>window.location.href='index.html',1000);}
+function handleRegister(){
+  ['panel-login','panel-register'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.querySelectorAll('.auth-tab').forEach(t=>t.style.display='none');
+  document.getElementById('auth-success').style.display='block';
+  toast('🎉 Account created!');
+}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+if(window.location.hash==='#register')switchTab('register');
+</script>
+</body>
+</html>

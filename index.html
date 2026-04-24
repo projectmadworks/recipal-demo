@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recipal — Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #7C9070;
+    --sage-light: #A8BC9E;
+    --sage-dark: #4E6145;
+    --cream: #F5F0E8;
+    --wood: #8B6F47;
+    --wood-light: #C4A882;
+    --charcoal: #2C2C2C;
+    --warm-white: #FDFAF5;
+    --muted: #7A7468;
+    --border: rgba(0,0,0,0.08);
+    --beef: #C0392B;
+    --chicken: #D4A017;
+    --pork: #E8879C;
+    --seafood: #4A90C4;
+    --radius: 4px;
+    --transition: 0.22s ease;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--warm-white); color: var(--charcoal); font-weight: 300; }
+
+  /* NAV */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px; height: 72px;
+    border-bottom: 1px solid var(--border);
+    background: var(--warm-white);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 600; color: var(--sage-dark); text-decoration: none; letter-spacing: -0.02em; }
+  .nav-logo span { color: var(--wood); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; transition: color var(--transition); }
+  .nav-links a:hover { color: var(--sage-dark); }
+  .nav-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-ghost { display: inline-flex; align-items: center; padding: 8px 18px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 0.84rem; font-weight: 400; cursor: pointer; text-decoration: none; border-radius: var(--radius); transition: all var(--transition); letter-spacing: 0.02em; }
+  .btn-ghost:hover { color: var(--charcoal); border-color: rgba(0,0,0,0.18); }
+  .btn-primary { display: inline-flex; align-items: center; padding: 8px 18px; background: var(--sage-dark); color: white; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; font-weight: 500; cursor: pointer; text-decoration: none; border: none; border-radius: var(--radius); transition: background var(--transition); letter-spacing: 0.02em; }
+  .btn-primary:hover { background: var(--sage); }
+
+  /* HERO */
+  .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 88vh; overflow: hidden; }
+  .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 80px 64px 80px 80px; }
+  .hero-eyebrow { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--wood); margin-bottom: 20px; font-weight: 500; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 4vw, 4.2rem); line-height: 1.1; color: var(--charcoal); margin-bottom: 24px; font-weight: 600; }
+  .hero-title em { color: var(--sage); font-style: italic; }
+  .hero-sub { font-size: 1rem; line-height: 1.75; color: var(--muted); max-width: 400px; margin-bottom: 40px; }
+  .hero-ctas { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .hero-cta { display: inline-flex; align-items: center; gap: 10px; background: var(--sage-dark); color: white; text-decoration: none; padding: 14px 28px; font-size: 0.88rem; font-weight: 500; letter-spacing: 0.04em; transition: background var(--transition); border-radius: var(--radius); }
+  .hero-cta:hover { background: var(--sage); }
+  .hero-cta svg { width: 16px; height: 16px; }
+  .hero-link { font-size: 0.88rem; color: var(--sage-dark); text-decoration: none; border-bottom: 1px solid var(--sage-light); padding-bottom: 2px; font-weight: 400; transition: color var(--transition); }
+  .hero-link:hover { color: var(--sage); }
+  .hero-right { position: relative; background: var(--cream); overflow: hidden; }
+  .hero-img-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, #e8e0d0 0%, #d4c9b5 50%, #c4b89e 100%); display: flex; align-items: center; justify-content: center; }
+  .hero-img-inner { text-align: center; opacity: 0.45; }
+  .hero-img-inner svg { width: 80px; height: 80px; color: var(--wood); }
+  .hero-img-inner p { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wood); margin-top: 12px; }
+
+  /* PROTEIN STRIP */
+  .protein-strip { display: flex; align-items: center; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .protein-label { padding: 0 32px; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 500; white-space: nowrap; border-right: 1px solid var(--border); height: 56px; display: flex; align-items: center; }
+  .protein-pill { display: flex; align-items: center; gap: 8px; padding: 0 28px; height: 56px; font-size: 0.84rem; font-weight: 400; text-decoration: none; color: var(--charcoal); border-right: 1px solid var(--border); transition: background var(--transition); }
+  .protein-pill:hover { background: var(--cream); }
+  .protein-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot-beef { background: var(--beef); }
+  .dot-chicken { background: var(--chicken); }
+  .dot-pork { background: var(--pork); }
+  .dot-seafood { background: var(--seafood); }
+
+  /* SECTIONS */
+  section { padding: 80px; }
+  .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 48px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 600; color: var(--charcoal); }
+  .section-link { font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sage-dark); text-decoration: none; font-weight: 500; border-bottom: 1px solid var(--sage-light); padding-bottom: 2px; }
+
+  /* RECIPE GRID */
+  .recipe-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .recipe-card { text-decoration: none; color: inherit; cursor: pointer; transition: transform var(--transition); display: block; }
+  .recipe-card:hover { transform: translateY(-3px); }
+  .recipe-card-img { aspect-ratio: 4/3; border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; }
+  .recipe-card-img-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0.22; }
+  .recipe-card-img-placeholder svg { width: 44px; height: 44px; }
+  .recipe-protein-tag { position: absolute; top: 12px; left: 12px; display: flex; align-items: center; gap: 6px; background: white; padding: 4px 10px 4px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 500; }
+  .recipe-difficulty { position: absolute; top: 12px; right: 12px; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 500; }
+  .diff-easy { background: #e8f4e8; color: #3a6b3a; }
+  .diff-medium { background: #fef8e7; color: #7a5c00; }
+  .diff-hard { background: #fde8e8; color: #8b2020; }
+
+  /* BOOKMARK BUTTON */
+  .card-bookmark { position: absolute; bottom: 12px; right: 12px; width: 32px; height: 32px; background: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 6px rgba(0,0,0,0.12); transition: all var(--transition); z-index: 2; }
+  .card-bookmark:hover { transform: scale(1.1); }
+  .card-bookmark svg { width: 14px; height: 14px; fill: none; stroke: var(--muted); stroke-width: 2; transition: all var(--transition); }
+  .card-bookmark.saved svg { fill: var(--sage-dark); stroke: var(--sage-dark); }
+
+  .recipe-card-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 600; color: var(--charcoal); margin-bottom: 8px; line-height: 1.3; }
+  .recipe-card-meta { font-size: 0.8rem; color: var(--muted); display: flex; gap: 14px; margin-bottom: 6px; }
+
+  /* STAR RATING */
+  .card-stars { display: flex; align-items: center; gap: 3px; }
+  .star { font-size: 0.8rem; color: #d4c5a0; }
+  .star.on { color: var(--wood); }
+  .star-count { font-size: 0.74rem; color: var(--muted); margin-left: 4px; }
+
+  /* FEATURED */
+  .featured-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 32px; }
+  .featured-main { text-decoration: none; color: inherit; display: block; }
+  .featured-main-img { aspect-ratio: 16/10; background: linear-gradient(135deg, #c4b89e 0%, #a89880 100%); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; opacity: 0.6; margin-bottom: 20px; }
+  .featured-main-img svg { width: 60px; height: 60px; }
+  .featured-tag { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--wood); font-weight: 500; margin-bottom: 10px; }
+  .featured-title { font-family: 'Playfair Display', serif; font-size: 1.65rem; font-weight: 600; line-height: 1.25; margin-bottom: 12px; }
+  .featured-desc { font-size: 0.9rem; line-height: 1.75; color: var(--muted); }
+  .featured-side { display: flex; flex-direction: column; gap: 0; }
+  .featured-side-card { display: grid; grid-template-columns: 96px 1fr; gap: 16px; text-decoration: none; color: inherit; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
+  .featured-side-card:first-child { padding-top: 0; }
+  .featured-side-card:last-child { border-bottom: none; }
+  .featured-side-img { aspect-ratio: 1; background: var(--cream); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; opacity: 0.55; }
+  .featured-side-img svg { width: 28px; height: 28px; }
+  .featured-side-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; line-height: 1.3; margin-bottom: 5px; }
+  .featured-side-meta { font-size: 0.78rem; color: var(--muted); }
+
+  /* ABOUT STRIP */
+  .about-strip { background: var(--sage-dark); color: white; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
+  .about-strip-left { padding: 80px; display: flex; flex-direction: column; justify-content: center; }
+  .about-strip-eyebrow { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sage-light); margin-bottom: 16px; font-weight: 500; }
+  .about-strip-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 600; line-height: 1.2; margin-bottom: 20px; }
+  .about-strip-text { font-size: 0.95rem; line-height: 1.8; color: rgba(255,255,255,0.7); margin-bottom: 36px; }
+  .about-strip-link { display: inline-flex; align-items: center; gap: 8px; color: white; text-decoration: none; font-size: 0.88rem; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 4px; width: fit-content; }
+  .about-strip-right { background: linear-gradient(135deg, #5a7050 0%, #3d5438 100%); display: flex; align-items: center; justify-content: center; opacity: 0.45; min-height: 340px; }
+  .about-strip-right svg { width: 80px; height: 80px; color: white; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 48px 80px; display: flex; align-items: center; justify-content: space-between; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600; color: var(--sage-dark); }
+  .footer-logo span { color: var(--wood); }
+  .footer-links { display: flex; gap: 28px; list-style: none; }
+  .footer-links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; transition: color var(--transition); }
+  .footer-links a:hover { color: var(--charcoal); }
+  .footer-copy { font-size: 0.78rem; color: var(--muted); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px); background: var(--charcoal); color: white; padding: 11px 22px; border-radius: 40px; font-size: 0.84rem; opacity: 0; transition: all 0.25s ease; z-index: 999; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Recip<span>al</span></a>
+  <ul class="nav-links">
+    <li><a href="recipes.html">Recipes</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="login.html" class="btn-ghost">Sign In</a>
+    <a href="login.html#register" class="btn-primary">Join Free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Simple. Seasonal. Satisfying.</p>
+    <h1 class="hero-title">Real recipes for<br><em>real kitchens</em></h1>
+    <p class="hero-sub">From weeknight chicken to slow-braised beef, every recipe on Recipal is written to be actually cooked — not just bookmarked.</p>
+    <div class="hero-ctas">
+      <a href="recipes.html" class="hero-cta">
+        Browse All Recipes
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+      <a href="login.html#register" class="hero-link">Create free account →</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-img-placeholder">
+      <div class="hero-img-inner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="9" r="1"/></svg>
+        <p>Hero food photo</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROTEIN STRIP -->
+<div class="protein-strip">
+  <div class="protein-label">Browse by protein</div>
+  <a href="recipes.html?protein=beef" class="protein-pill"><span class="protein-dot dot-beef"></span> Beef</a>
+  <a href="recipes.html?protein=chicken" class="protein-pill"><span class="protein-dot dot-chicken"></span> Chicken</a>
+  <a href="recipes.html?protein=pork" class="protein-pill"><span class="protein-dot dot-pork"></span> Pork</a>
+  <a href="recipes.html?protein=seafood" class="protein-pill"><span class="protein-dot dot-seafood"></span> Seafood</a>
+</div>
+
+<!-- LATEST RECIPES -->
+<section>
+  <div class="section-header">
+    <h2 class="section-title">Latest Recipes</h2>
+    <a href="recipes.html" class="section-link">View all</a>
+  </div>
+  <div class="recipe-grid">
+
+    <a href="recipe-detail.html" class="recipe-card">
+      <div class="recipe-card-img" style="background:#f0e8dc;">
+        <div class="recipe-card-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div>
+        <div class="recipe-protein-tag"><span class="protein-dot dot-beef"></span> Beef</div>
+        <div class="recipe-difficulty diff-medium">Medium</div>
+        <button class="card-bookmark" onclick="toggleBookmark(event,this)"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+      </div>
+      <div class="recipe-card-title">Slow-Braised Short Rib with Rosemary Jus</div>
+      <div class="recipe-card-meta"><span>⏱ 3h 20m</span><span>🍽 4 servings</span></div>
+      <div class="card-stars"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span><span class="star-count">(24)</span></div>
+    </a>
+
+    <a href="recipe-detail.html" class="recipe-card">
+      <div class="recipe-card-img" style="background:#fdf4dc;">
+        <div class="recipe-card-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div>
+        <div class="recipe-protein-tag"><span class="protein-dot dot-chicken"></span> Chicken</div>
+        <div class="recipe-difficulty diff-easy">Easy</div>
+        <button class="card-bookmark saved" onclick="toggleBookmark(event,this)"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+      </div>
+      <div class="recipe-card-title">Lemon Herb Roast Chicken Thighs</div>
+      <div class="recipe-card-meta"><span>⏱ 45m</span><span>🍽 4 servings</span></div>
+      <div class="card-stars"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star-count">(41)</span></div>
+    </a>
+
+    <a href="recipe-detail.html" class="recipe-card">
+      <div class="recipe-card-img" style="background:#fde8ee;">
+        <div class="recipe-card-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="#E8879C" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div>
+        <div class="recipe-protein-tag"><span class="protein-dot dot-pork"></span> Pork</div>
+        <div class="recipe-difficulty diff-easy">Easy</div>
+        <button class="card-bookmark" onclick="toggleBookmark(event,this)"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+      </div>
+      <div class="recipe-card-title">Honey Garlic Pork Tenderloin</div>
+      <div class="recipe-card-meta"><span>⏱ 35m</span><span>🍽 3 servings</span></div>
+      <div class="card-stars"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span><span class="star-count">(18)</span></div>
+    </a>
+
+    <a href="recipe-detail.html" class="recipe-card">
+      <div class="recipe-card-img" style="background:#deeef8;">
+        <div class="recipe-card-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="#4A90C4" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div>
+        <div class="recipe-protein-tag"><span class="protein-dot dot-seafood"></span> Seafood</div>
+        <div class="recipe-difficulty diff-easy">Easy</div>
+        <button class="card-bookmark" onclick="toggleBookmark(event,this)"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+      </div>
+      <div class="recipe-card-title">Pan-Seared Salmon with Dill Butter</div>
+      <div class="recipe-card-meta"><span>⏱ 20m</span><span>🍽 2 servings</span></div>
+      <div class="card-stars"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star-count">(29)</span></div>
+    </a>
+
+    <a href="recipe-detail.html" class="recipe-card">
+      <div class="recipe-card-img" style="background:#f0e8dc;">
+        <div class="recipe-card-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div>
+        <div class="recipe-protein-tag"><span class="protein-dot dot-beef"></span> Beef</div>
+        <div class="recipe-difficulty diff-hard">Hard</div>
+        <button class="card-bookmark" onclick="toggleBookmark(event,this)"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+      </div>
+      <div class="recipe-card-title">Classic Beef Wellington</div>
+      <div class="recipe-card-meta"><span>⏱ 2h 30m</span><span>🍽 6 servings</span></div>
+      <div class="card-stars"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star-count">(31)</span></div>
+    </a>
+
+    <a href="recipe-detail.html" class="recipe-card">
+      <div class="recipe-card-img" style="background:#fdf4dc;">
+        <div class="recipe-card-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div>
+        <div class="recipe-protein-tag"><span class="protein-dot dot-chicken"></span> Chicken</div>
+        <div class="recipe-difficulty diff-medium">Medium</div>
+        <button class="card-bookmark" onclick="toggleBookmark(event,this)"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+      </div>
+      <div class="recipe-card-title">Chicken Piccata with Capers &amp; White Wine</div>
+      <div class="recipe-card-meta"><span>⏱ 1h</span><span>🍽 4 servings</span></div>
+      <div class="card-stars"><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span><span class="star-count">(19)</span></div>
+    </a>
+
+  </div>
+</section>
+
+<!-- EDITOR'S PICKS -->
+<section style="background: var(--cream);">
+  <div class="section-header">
+    <h2 class="section-title">Editor's Picks</h2>
+    <a href="recipes.html" class="section-link">See more</a>
+  </div>
+  <div class="featured-grid">
+    <a href="recipe-detail.html" class="featured-main">
+      <div class="featured-main-img">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#8B6F47" stroke-width="1"><circle cx="12" cy="12" r="10"/></svg>
+      </div>
+      <div class="featured-tag">⭑ Feature Recipe · Beef · Ribeye</div>
+      <div class="featured-title">The Perfect Cast Iron Ribeye</div>
+      <div class="featured-desc">A foolproof method for achieving a restaurant-quality crust at home — no grill required. Butter-basted, herb-finished, and ready in under 20 minutes.</div>
+    </a>
+    <div class="featured-side">
+      <a href="recipe-detail.html" class="featured-side-card">
+        <div class="featured-side-img"><svg viewBox="0 0 24 24" fill="none" stroke="#4A90C4" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
+        <div><div class="featured-side-title">Garlic Butter Shrimp Scampi</div><div class="featured-side-meta">Seafood · Easy · 15m</div></div>
+      </a>
+      <a href="recipe-detail.html" class="featured-side-card">
+        <div class="featured-side-img"><svg viewBox="0 0 24 24" fill="none" stroke="#E8879C" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
+        <div><div class="featured-side-title">Pulled Pork Shoulder with Slaw</div><div class="featured-side-meta">Pork · Medium · 5h</div></div>
+      </a>
+      <a href="recipe-detail.html" class="featured-side-card">
+        <div class="featured-side-img"><svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
+        <div><div class="featured-side-title">Thai Basil Chicken Stir-Fry</div><div class="featured-side-meta">Chicken · Easy · 25m</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT STRIP -->
+<div class="about-strip">
+  <div class="about-strip-left">
+    <p class="about-strip-eyebrow">The story behind Recipal</p>
+    <h2 class="about-strip-title">Cooking is simpler than the internet makes it seem.</h2>
+    <p class="about-strip-text">Recipal started as a personal recipe notebook — a way to stop losing good meals to memory. Now it's a growing library of tested, straightforward recipes built around quality ingredients and honest technique.</p>
+    <a href="#" class="about-strip-link">Read the full story →</a>
+  </div>
+  <div class="about-strip-right">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Recip<span>al</span></div>
+  <ul class="footer-links">
+    <li><a href="recipes.html">Recipes</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 Recipal</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+<script>
+function toggleBookmark(e, btn) {
+  e.preventDefault(); e.stopPropagation();
+  btn.classList.toggle('saved');
+  toast(btn.classList.contains('saved') ? '🔖 Recipe saved' : 'Bookmark removed');
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>

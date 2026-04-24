@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recipal Platform — Register Your Business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #7C9070; --sage-light: #A8BC9E; --sage-dark: #4E6145;
+    --cream: #F5F0E8; --wood: #8B6F47; --charcoal: #2C2C2C;
+    --warm-white: #FDFAF5; --muted: #7A7468; --border: rgba(0,0,0,0.08);
+    --radius: 4px; --transition: 0.22s ease;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); font-weight: 300; min-height: 100vh; }
+
+  /* NAV */
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 68px; background: var(--warm-white); border-bottom: 1px solid var(--border); }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 600; color: var(--sage-dark); text-decoration: none; letter-spacing: -0.02em; }
+  .nav-logo span { color: var(--wood); }
+  .nav-badge { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); padding: 4px 12px; border-radius: 20px; }
+
+  /* PROGRESS */
+  .progress-wrap { background: var(--warm-white); border-bottom: 1px solid var(--border); padding: 0 80px; }
+  .progress-steps { display: flex; align-items: stretch; height: 60px; }
+  .prog-step { display: flex; align-items: center; gap: 9px; padding: 0 20px; cursor: pointer; border-bottom: 2px solid transparent; transition: all var(--transition); }
+  .prog-step:first-child { padding-left: 0; }
+  .prog-step.done { border-bottom-color: var(--sage-light); }
+  .prog-step.active { border-bottom-color: var(--sage-dark); }
+  .prog-num { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 600; flex-shrink: 0; transition: all var(--transition); }
+  .prog-step:not(.done):not(.active) .prog-num { background: var(--cream); color: var(--muted); border: 1px solid var(--border); }
+  .prog-step.done .prog-num, .prog-step.active .prog-num { background: var(--sage-dark); color: white; border: none; }
+  .prog-label { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+  .prog-step.active .prog-label { color: var(--charcoal); font-weight: 500; }
+  .prog-step.done .prog-label { color: var(--sage-dark); }
+  .prog-arrow { color: var(--border); font-size: 0.8rem; margin: 0 2px; }
+
+  /* LAYOUT */
+  .page-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; max-width: 1080px; margin: 0 auto; padding: 36px 48px 80px; }
+
+  /* STEP CARDS */
+  .step { display: none; }
+  .step.active { display: block; }
+  .step-inner { background: var(--warm-white); border: 1px solid var(--border); border-radius: 6px; padding: 40px; }
+  .step-inner h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 600; margin-bottom: 8px; }
+  .step-inner .step-desc { font-size: 0.9rem; color: var(--muted); margin-bottom: 32px; line-height: 1.7; }
+
+  /* FORM */
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .field input, .field textarea, .field select { font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--charcoal); background: white; border: 1px solid var(--border); padding: 10px 13px; outline: none; transition: border-color var(--transition), box-shadow var(--transition); border-radius: var(--radius); -webkit-appearance: none; }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(124,144,112,0.1); }
+  .field textarea { min-height: 80px; resize: vertical; line-height: 1.6; }
+  .form-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .subdomain-wrap { display: flex; align-items: center; }
+  .subdomain-prefix { padding: 10px 13px; background: var(--cream); border: 1px solid var(--border); border-right: none; border-radius: var(--radius) 0 0 var(--radius); font-size: 0.88rem; color: var(--muted); white-space: nowrap; }
+  .subdomain-wrap input { border-radius: 0 var(--radius) var(--radius) 0; border-left: none; }
+  .field-hint { font-size: 0.74rem; color: var(--muted); margin-top: 5px; }
+
+  .section-sep { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  /* NAV BUTTONS */
+  .step-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .btn-back { padding: 10px 20px; background: white; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 0.86rem; border: 1px solid var(--border); cursor: pointer; border-radius: var(--radius); transition: all var(--transition); }
+  .btn-back:hover { color: var(--charcoal); border-color: var(--charcoal); }
+  .btn-next { display: flex; align-items: center; gap: 8px; padding: 11px 24px; background: var(--sage-dark); color: white; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; border: none; cursor: pointer; border-radius: var(--radius); transition: background var(--transition); }
+  .btn-next:hover { background: var(--sage); }
+
+  /* COLOUR PRESETS */
+  .color-presets { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+  .cp { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: all var(--transition); flex-shrink: 0; }
+  .cp:hover, .cp.active { border-color: white; box-shadow: 0 0 0 2px var(--charcoal); }
+  .cp-custom { font-family: 'DM Sans', sans-serif; font-size: 0.84rem; border: 1px solid var(--border); padding: 6px 10px; border-radius: var(--radius); outline: none; width: 100px; }
+
+  /* PLAN CARDS */
+  .plan-list { display: flex; flex-direction: column; gap: 12px; }
+  .plan-card { display: flex; align-items: center; gap: 16px; padding: 18px 20px; border: 2px solid var(--border); border-radius: var(--radius); background: white; cursor: pointer; transition: all var(--transition); }
+  .plan-card:hover { border-color: var(--sage-light); }
+  .plan-card.active { border-color: var(--sage-dark); background: #f0f4ee; }
+  .plan-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; transition: all var(--transition); display: flex; align-items: center; justify-content: center; }
+  .plan-card.active .plan-radio { border-color: var(--sage-dark); background: var(--sage-dark); }
+  .plan-card.active .plan-radio::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: white; }
+  .plan-info { flex: 1; }
+  .plan-name { font-weight: 500; font-size: 0.92rem; }
+  .plan-desc { font-size: 0.78rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+  .plan-price { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; color: var(--sage-dark); white-space: nowrap; text-align: right; }
+  .plan-soon { font-size: 0.68rem; color: var(--wood); background: var(--cream); padding: 2px 7px; border-radius: 10px; display: block; margin-top: 3px; }
+  .plan-note { margin-top: 16px; padding: 13px 16px; background: var(--cream); border-radius: var(--radius); font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+  /* AGREE */
+  .agree-box { margin-top: 8px; padding: 14px 16px; background: #f0f4ee; border-radius: var(--radius); border: 1px solid var(--sage-light); font-size: 0.82rem; line-height: 1.6; }
+  .agree-box a { color: var(--sage-dark); }
+
+  /* SIDEBAR */
+  .sidebar { position: sticky; top: 36px; }
+  .sidebar-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 6px; padding: 24px; margin-bottom: 16px; }
+  .sidebar-card-title { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin-bottom: 18px; }
+
+  /* BRAND PREVIEW */
+  .brand-preview { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+  .bp-nav { height: 40px; display: flex; align-items: center; padding: 0 14px; }
+  .bp-logo { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 600; color: white; }
+  .bp-body { padding: 14px; background: var(--warm-white); }
+  .bp-hero { height: 72px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+  .bp-hero span { font-family: 'Playfair Display', serif; font-size: 0.82rem; font-style: italic; color: white; }
+  .bp-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .bp-card { height: 44px; background: var(--cream); border-radius: var(--radius); }
+  .preview-hint { font-size: 0.72rem; color: var(--muted); text-align: center; margin-top: 12px; }
+
+  /* CHECKLIST */
+  .check-list { display: flex; flex-direction: column; gap: 10px; }
+  .check-item { display: flex; align-items: center; gap: 10px; font-size: 0.84rem; }
+  .check-circle { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; flex-shrink: 0; transition: all var(--transition); }
+  .check-circle.done { background: var(--sage-dark); color: white; }
+  .check-circle.pending { background: var(--cream); color: var(--muted); border: 1px solid var(--border); }
+  .check-text { color: var(--charcoal); }
+  .check-text.pending { color: var(--muted); }
+
+  /* SUCCESS */
+  .success-screen { display: none; background: var(--warm-white); border: 1px solid var(--border); border-radius: 6px; padding: 72px 40px; text-align: center; }
+  .success-icon { font-size: 3.5rem; margin-bottom: 20px; }
+  .success-screen h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 600; margin-bottom: 12px; }
+  .success-screen p { font-size: 0.92rem; color: var(--muted); line-height: 1.8; max-width: 380px; margin: 0 auto 32px; }
+  .success-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-go { display: inline-flex; align-items: center; padding: 12px 26px; background: var(--sage-dark); color: white; text-decoration: none; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; border-radius: var(--radius); transition: background var(--transition); }
+  .btn-go:hover { background: var(--sage); }
+  .btn-go-outline { display: inline-flex; align-items: center; padding: 11px 24px; background: white; color: var(--charcoal); text-decoration: none; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; border: 1px solid var(--border); border-radius: var(--radius); transition: all var(--transition); }
+  .btn-go-outline:hover { border-color: var(--charcoal); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px); background: var(--charcoal); color: white; padding: 11px 22px; border-radius: 40px; font-size: 0.84rem; opacity: 0; transition: all 0.25s ease; z-index: 999; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Recip<span>al</span> <span style="font-size:0.65rem;font-family:'DM Sans',sans-serif;font-weight:300;letter-spacing:0;color:var(--muted);margin-left:4px;">Platform</span></a>
+  <span class="nav-badge">Business Registration</span>
+</nav>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="prog-step active" id="prog-1" onclick="goTo(1)"><div class="prog-num">1</div><div class="prog-label">Business Info</div></div>
+    <span class="prog-arrow">›</span>
+    <div class="prog-step" id="prog-2" onclick="goTo(2)"><div class="prog-num">2</div><div class="prog-label">Brand Style</div></div>
+    <span class="prog-arrow">›</span>
+    <div class="prog-step" id="prog-3" onclick="goTo(3)"><div class="prog-num">3</div><div class="prog-label">Contact Details</div></div>
+    <span class="prog-arrow">›</span>
+    <div class="prog-step" id="prog-4" onclick="goTo(4)"><div class="prog-num">4</div><div class="prog-label">Choose Plan</div></div>
+    <span class="prog-arrow">›</span>
+    <div class="prog-step" id="prog-5" onclick="goTo(5)"><div class="prog-num">5</div><div class="prog-label">Owner Account</div></div>
+  </div>
+</div>
+
+<div class="page-layout">
+  <div>
+
+    <!-- STEP 1 -->
+    <div class="step active" id="step-1">
+      <div class="step-inner">
+        <h2>Tell us about your business</h2>
+        <p class="step-desc">This becomes your branded Recipal instance. Your customers see your name, not ours.</p>
+        <div class="field"><label>Business / Brand Name *</label><input type="text" id="bizName" placeholder="e.g. Butcher & Co., The Kitchen Table…" oninput="updatePreview()"></div>
+        <div class="form-2">
+          <div class="field"><label>Industry / Niche</label><select><option>Recipe Blog</option><option>Restaurant</option><option>Cooking School</option><option>Food Influencer</option><option>Catering</option><option>Other</option></select></div>
+          <div class="field"><label>Business Website</label><input type="text" placeholder="https://yourbusiness.com"></div>
+        </div>
+        <div class="field"><label>Short Description</label><textarea placeholder="A sentence or two about your business…"></textarea></div>
+        <hr class="section-sep">
+        <div class="field">
+          <label>Choose Your URL</label>
+          <div class="subdomain-wrap"><span class="subdomain-prefix">recipal.com/</span><input type="text" id="subSlug" placeholder="yourbusiness"></div>
+          <p class="field-hint">Lowercase letters, numbers, and hyphens only.</p>
+        </div>
+        <div class="step-nav"><div></div><button class="btn-next" onclick="goTo(2)">Next: Brand Style →</button></div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" id="step-2">
+      <div class="step-inner">
+        <h2>Define your brand style</h2>
+        <p class="step-desc">Choose colours that represent your brand. These will be applied across your entire instance.</p>
+        <div class="field">
+          <label>Logo Upload</label>
+          <div style="border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center;background:var(--cream);cursor:pointer;" onclick="toast('Logo upload — Supabase Storage in Phase 2')">
+            <div style="font-size:1.8rem;margin-bottom:6px;">🖼</div>
+            <div style="font-size:0.84rem;color:var(--muted);">Click to upload your logo</div>
+            <p class="field-hint" style="margin:4px 0 0;">PNG or SVG · Transparent background · Max 2MB</p>
+          </div>
+        </div>
+        <div class="field"><label>Or use text logo</label><input type="text" id="textLogo" placeholder="Your Brand Name" oninput="updatePreview()"></div>
+        <hr class="section-sep">
+        <div class="field">
+          <label>Primary Colour</label>
+          <div class="color-presets">
+            <div class="cp active" style="background:#4E6145;" onclick="setPrimary('#4E6145',this)"></div>
+            <div class="cp" style="background:#1a3a5c;" onclick="setPrimary('#1a3a5c',this)"></div>
+            <div class="cp" style="background:#6b2d2d;" onclick="setPrimary('#6b2d2d',this)"></div>
+            <div class="cp" style="background:#2d5a4a;" onclick="setPrimary('#2d5a4a',this)"></div>
+            <div class="cp" style="background:#4a3060;" onclick="setPrimary('#4a3060',this)"></div>
+            <div class="cp" style="background:#8B6F47;" onclick="setPrimary('#8B6F47',this)"></div>
+            <div class="cp" style="background:#1c1c1c;" onclick="setPrimary('#1c1c1c',this)"></div>
+            <input class="cp-custom" type="text" id="primaryInput" value="#4E6145" oninput="setPrimary(this.value,null)">
+          </div>
+        </div>
+        <div class="field" style="margin:0">
+          <label>Accent Colour</label>
+          <div class="color-presets">
+            <div class="cp active" style="background:#8B6F47;" onclick="setAccent('#8B6F47',this)"></div>
+            <div class="cp" style="background:#C0392B;" onclick="setAccent('#C0392B',this)"></div>
+            <div class="cp" style="background:#D4A017;" onclick="setAccent('#D4A017',this)"></div>
+            <div class="cp" style="background:#4A90C4;" onclick="setAccent('#4A90C4',this)"></div>
+            <div class="cp" style="background:#7C9070;" onclick="setAccent('#7C9070',this)"></div>
+            <input class="cp-custom" type="text" id="accentInput" value="#8B6F47">
+          </div>
+        </div>
+        <div class="step-nav"><button class="btn-back" onclick="goTo(1)">← Back</button><button class="btn-next" onclick="goTo(3)">Next: Contact Details →</button></div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step" id="step-3">
+      <div class="step-inner">
+        <h2>Contact information</h2>
+        <p class="step-desc">Populates your Contact page and footer. You can update it anytime from the admin panel.</p>
+        <div class="form-2">
+          <div class="field"><label>Contact Email *</label><input type="email" placeholder="hello@yourbusiness.com"></div>
+          <div class="field"><label>Phone</label><input type="tel" placeholder="+1 (555) 000-0000"></div>
+        </div>
+        <div class="field"><label>Business Address</label><input type="text" placeholder="123 Main St, City, Province"></div>
+        <hr class="section-sep">
+        <div class="form-2">
+          <div class="field"><label>Instagram</label><input type="text" placeholder="https://instagram.com/…"></div>
+          <div class="field"><label>Pinterest</label><input type="text" placeholder="https://pinterest.com/…"></div>
+        </div>
+        <div class="form-2">
+          <div class="field"><label>YouTube</label><input type="text" placeholder="https://youtube.com/@…"></div>
+          <div class="field"><label>TikTok</label><input type="text" placeholder="https://tiktok.com/@…"></div>
+        </div>
+        <div class="field" style="margin:0"><label>Response Time Message</label><input type="text" value="Usually within 2 business days"></div>
+        <div class="step-nav"><button class="btn-back" onclick="goTo(2)">← Back</button><button class="btn-next" onclick="goTo(4)">Next: Choose Plan →</button></div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step" id="step-4">
+      <div class="step-inner">
+        <h2>Choose your plan</h2>
+        <p class="step-desc">Start free and upgrade as you grow. Full billing via Stripe is coming in Phase 4.</p>
+        <div class="plan-list">
+          <div class="plan-card active" onclick="selectPlan(this)">
+            <div class="plan-radio"></div>
+            <div class="plan-info"><div class="plan-name">Starter — Free</div><div class="plan-desc">Up to 20 recipes, 1 admin, basic analytics</div></div>
+            <div class="plan-price">$0<span style="font-size:0.65rem;font-family:'DM Sans',sans-serif;color:var(--muted);font-weight:300;">/mo</span></div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this)">
+            <div class="plan-radio"></div>
+            <div class="plan-info"><div class="plan-name">Pro</div><div class="plan-desc">Unlimited recipes, 3 team members, promo codes, equipment affiliate links</div></div>
+            <div style="text-align:right;"><div class="plan-price">$29<span style="font-size:0.65rem;font-family:'DM Sans',sans-serif;color:var(--muted);font-weight:300;">/mo</span></div><span class="plan-soon">Stripe · Phase 4</span></div>
+          </div>
+          <div class="plan-card" onclick="selectPlan(this)">
+            <div class="plan-radio"></div>
+            <div class="plan-info"><div class="plan-name">Business</div><div class="plan-desc">Everything in Pro + unlimited team, custom domain, white-label unbranded, priority support</div></div>
+            <div style="text-align:right;"><div class="plan-price">$79<span style="font-size:0.65rem;font-family:'DM Sans',sans-serif;color:var(--muted);font-weight:300;">/mo</span></div><span class="plan-soon">Stripe · Phase 4</span></div>
+          </div>
+        </div>
+        <p class="plan-note">💡 All paid plans include a 14-day free trial. No credit card required to start with the free tier.</p>
+        <div class="step-nav"><button class="btn-back" onclick="goTo(3)">← Back</button><button class="btn-next" onclick="goTo(5)">Next: Owner Account →</button></div>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step" id="step-5">
+      <div class="step-inner">
+        <h2>Create your owner account</h2>
+        <p class="step-desc">This is the Admin account for your instance. Use these credentials to log in and manage everything.</p>
+        <div class="form-2">
+          <div class="field"><label>First Name *</label><input type="text" placeholder="Jane"></div>
+          <div class="field"><label>Last Name *</label><input type="text" placeholder="Smith"></div>
+        </div>
+        <div class="field"><label>Email Address *</label><input type="email" placeholder="jane@yourbusiness.com"></div>
+        <div class="form-2">
+          <div class="field" style="margin:0"><label>Password *</label><input type="password" placeholder="Min. 8 characters"></div>
+          <div class="field" style="margin:0"><label>Confirm Password *</label><input type="password" placeholder="Re-enter password"></div>
+        </div>
+        <div class="agree-box">✓ &nbsp; By creating an account you agree to the Recipal Platform <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</div>
+        <div class="step-nav"><button class="btn-back" onclick="goTo(4)">← Back</button><button class="btn-next" onclick="complete()">Launch My Instance 🚀</button></div>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="success">
+      <div class="success-icon">🎉</div>
+      <h2>Your instance is live!</h2>
+      <p>Your branded Recipal instance has been created. Head to your admin panel to add your first recipes and set up your brand.</p>
+      <div class="success-actions">
+        <a href="admin.html" class="btn-go">Go to Admin Panel →</a>
+        <a href="index.html" class="btn-go-outline">View Your Site</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-card-title">Live Preview</div>
+      <div class="brand-preview">
+        <div class="bp-nav" id="bpNav" style="background:#4E6145;"><span class="bp-logo" id="bpLogo">Your Brand</span></div>
+        <div class="bp-body">
+          <div class="bp-hero" id="bpHero" style="background:#4E6145;"><span>Real recipes…</span></div>
+          <div class="bp-cards"><div class="bp-card"></div><div class="bp-card"></div><div class="bp-card"></div><div class="bp-card"></div></div>
+        </div>
+      </div>
+      <p class="preview-hint">Preview updates as you type</p>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-card-title">Setup Checklist</div>
+      <div class="check-list" id="checklist">
+        <div class="check-item"><div class="check-circle pending" id="c1">1</div><span class="check-text pending" id="ct1">Business info</span></div>
+        <div class="check-item"><div class="check-circle pending" id="c2">2</div><span class="check-text pending" id="ct2">Brand style</span></div>
+        <div class="check-item"><div class="check-circle pending" id="c3">3</div><span class="check-text pending" id="ct3">Contact details</span></div>
+        <div class="check-item"><div class="check-circle pending" id="c4">4</div><span class="check-text pending" id="ct4">Plan selected</span></div>
+        <div class="check-item"><div class="check-circle pending" id="c5">5</div><span class="check-text pending" id="ct5">Owner account</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let primary='#4E6145';
+
+function goTo(n){
+  for(let i=1;i<=5;i++){
+    const s=document.getElementById('step-'+i);
+    const p=document.getElementById('prog-'+i);
+    if(s)s.classList.toggle('active',i===n);
+    if(p){
+      p.classList.remove('active','done');
+      if(i<n)p.classList.add('done');
+      if(i===n)p.classList.add('active');
+    }
+    const c=document.getElementById('c'+i);
+    const ct=document.getElementById('ct'+i);
+    if(c&&ct){
+      if(i<n){c.className='check-circle done';c.textContent='✓';ct.className='check-text';}
+      else{c.className='check-circle pending';c.textContent=i;ct.className='check-text pending';}
+    }
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updatePreview(){
+  const name=document.getElementById('bizName')?.value||document.getElementById('textLogo')?.value||'Your Brand';
+  document.getElementById('bpLogo').textContent=name||'Your Brand';
+}
+
+function setPrimary(color,btn){
+  if(!color||color.length<4)return;
+  primary=color;
+  document.getElementById('bpNav').style.background=color;
+  document.getElementById('bpHero').style.background=color;
+  document.getElementById('primaryInput').value=color;
+  if(btn){document.querySelectorAll('.cp').forEach(p=>p.classList.remove('active'));btn.classList.add('active');}
+}
+
+function setAccent(color,btn){
+  if(btn){btn.parentElement.querySelectorAll('.cp').forEach(p=>p.classList.remove('active'));btn.classList.add('active');}
+  document.getElementById('accentInput').value=color;
+}
+
+function selectPlan(card){document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('active'));card.classList.add('active');}
+
+function complete(){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.prog-step').forEach(p=>p.classList.add('done'));
+  document.getElementById('success').style.display='block';
+  for(let i=1;i<=5;i++){
+    const c=document.getElementById('c'+i),ct=document.getElementById('ct'+i);
+    if(c){c.className='check-circle done';c.textContent='✓';}
+    if(ct)ct.className='check-text';
+  }
+  toast('🎉 Instance created successfully!');
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+</script>
+</body>
+</html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recipal — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #7C9070; --sage-light: #A8BC9E; --sage-dark: #4E6145;
+    --cream: #F5F0E8; --wood: #8B6F47; --wood-light: #C4A882;
+    --charcoal: #2C2C2C; --warm-white: #FDFAF5; --muted: #7A7468;
+    --border: rgba(0,0,0,0.08); --bg: #F0EDE8;
+    --beef: #C0392B; --chicken: #D4A017; --pork: #E8879C; --seafood: #4A90C4;
+    --radius: 4px; --transition: 0.2s ease;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--charcoal); font-weight: 300; }
+
+  /* ADMIN NAV */
+  .admin-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 60px; background: var(--sage-dark); border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 200; }
+  .admin-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600; color: white; text-decoration: none; letter-spacing: -0.02em; }
+  .admin-logo span { color: var(--sage-light); }
+  .admin-badge { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; background: rgba(255,255,255,0.12); color: white; padding: 3px 10px; border-radius: 20px; margin-left: 12px; }
+  .admin-nav-right { display: flex; align-items: center; gap: 16px; }
+  .admin-nav-link { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.84rem; transition: color var(--transition); }
+  .admin-nav-link:hover { color: white; }
+  .admin-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--sage); color: white; font-size: 0.72rem; font-weight: 500; display: flex; align-items: center; justify-content: center; }
+
+  /* LAYOUT */
+  .admin-layout { display: grid; grid-template-columns: 210px 1fr; min-height: calc(100vh - 60px); }
+
+  /* SIDEBAR */
+  .admin-sidebar { background: white; border-right: 1px solid var(--border); padding: 24px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+  .sidebar-label { font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 500; padding: 0 18px; margin: 20px 0 8px; }
+  .sidebar-label:first-child { margin-top: 0; }
+  .sidebar-btn { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 18px; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; color: var(--muted); background: none; border: none; border-left: 3px solid transparent; cursor: pointer; transition: all var(--transition); text-align: left; }
+  .sidebar-btn:hover { color: var(--charcoal); background: var(--cream); }
+  .sidebar-btn.active { color: var(--sage-dark); background: #eef3ec; border-left-color: var(--sage-dark); font-weight: 500; }
+  .sidebar-btn svg { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.7; }
+  .sidebar-count { margin-left: auto; font-size: 0.7rem; background: var(--cream); color: var(--muted); padding: 2px 7px; border-radius: 10px; font-weight: 400; }
+
+  /* MAIN */
+  .admin-main { padding: 32px 36px; }
+
+  /* PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* PAGE HEADER */
+  .panel-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 20px; }
+  .panel-header h1 { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 600; }
+  .panel-header p { font-size: 0.86rem; color: var(--muted); margin-top: 4px; }
+  .btn-add { display: inline-flex; align-items: center; gap: 7px; padding: 10px 20px; background: var(--sage-dark); color: white; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; font-weight: 500; border: none; cursor: pointer; border-radius: var(--radius); transition: background var(--transition); white-space: nowrap; }
+  .btn-add:hover { background: var(--sage); }
+  .btn-secondary { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; background: white; color: var(--charcoal); font-family: 'DM Sans', sans-serif; font-size: 0.84rem; border: 1px solid var(--border); cursor: pointer; border-radius: var(--radius); transition: all var(--transition); }
+  .btn-secondary:hover { border-color: var(--charcoal); }
+
+  /* STATS */
+  .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+  .stat-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 600; color: var(--charcoal); line-height: 1; }
+  .stat-delta { font-size: 0.76rem; color: #3a6b3a; margin-top: 5px; }
+
+  /* TABLE */
+  .table-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .table-toolbar { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .table-search { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); background: var(--warm-white); padding: 0 12px; height: 34px; border-radius: var(--radius); flex: 1; max-width: 260px; transition: border-color var(--transition); }
+  .table-search:focus-within { border-color: var(--sage); }
+  .table-search svg { width: 13px; height: 13px; color: var(--muted); flex-shrink: 0; }
+  .table-search input { border: none; background: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; color: var(--charcoal); width: 100%; }
+  .table-select { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; border: 1px solid var(--border); padding: 5px 10px; border-radius: var(--radius); outline: none; background: white; color: var(--charcoal); }
+  table { width: 100%; border-collapse: collapse; }
+  th { padding: 10px 16px; font-size: 0.68rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); font-weight: 500; text-align: left; background: var(--cream); border-bottom: 1px solid var(--border); }
+  td { padding: 12px 16px; font-size: 0.84rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafaf7; }
+  .recipe-cell { display: flex; align-items: center; gap: 12px; }
+  .recipe-thumb { width: 38px; height: 38px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .recipe-thumb svg { width: 15px; height: 15px; opacity: 0.45; }
+  .rc-title { font-weight: 500; font-size: 0.86rem; }
+  .rc-id { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 20px; font-size: 0.7rem; font-weight: 500; }
+  .badge-pub { background: #e8f4e8; color: #2e6b2e; }
+  .badge-draft { background: var(--cream); color: var(--muted); }
+  .badge-review { background: #fef8e7; color: #7a5c00; }
+  .badge-admin { background: #fde8e8; color: #8b2020; }
+  .badge-team { background: #fef8e7; color: #7a5c00; }
+  .badge-cook { background: #e8f4e8; color: #2e6b2e; }
+  .tbl-action { background: none; border: none; cursor: pointer; color: var(--muted); padding: 4px 8px; border-radius: var(--radius); transition: all var(--transition); font-family: 'DM Sans', sans-serif; font-size: 0.78rem; }
+  .tbl-action:hover { background: var(--cream); color: var(--charcoal); }
+  .pdot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+  .pdot-beef { background: var(--beef); } .pdot-chk { background: var(--chicken); } .pdot-pork { background: var(--pork); } .pdot-sea { background: var(--seafood); }
+
+  /* FORM */
+  .form-layout { display: grid; grid-template-columns: 1fr 300px; gap: 20px; }
+  .form-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; }
+  .form-card-title { font-size: 0.86rem; font-weight: 500; color: var(--charcoal); margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 7px; }
+  .form-card-title svg { width: 14px; height: 14px; color: var(--sage); opacity: 0.8; }
+  .form-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { font-size: 0.7rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .field input, .field textarea, .field select { font-family: 'DM Sans', sans-serif; font-size: 0.86rem; color: var(--charcoal); background: var(--warm-white); border: 1px solid var(--border); padding: 9px 12px; outline: none; transition: border-color var(--transition), box-shadow var(--transition); border-radius: var(--radius); -webkit-appearance: none; }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(124,144,112,0.1); }
+  .field textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+  /* DYNAMIC ROWS */
+  .dyn-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .dyn-row { display: flex; gap: 8px; align-items: center; }
+  .dyn-row input { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; color: var(--charcoal); background: var(--warm-white); border: 1px solid var(--border); padding: 8px 11px; outline: none; border-radius: var(--radius); transition: border-color var(--transition); }
+  .dyn-row input:focus { border-color: var(--sage); }
+  .dyn-row input.sm { max-width: 72px; }
+  .dyn-row textarea { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; color: var(--charcoal); background: var(--warm-white); border: 1px solid var(--border); padding: 8px 11px; outline: none; border-radius: var(--radius); min-height: 68px; resize: vertical; line-height: 1.5; transition: border-color var(--transition); }
+  .dyn-row textarea:focus { border-color: var(--sage); }
+  .rm-btn { width: 26px; height: 26px; background: none; border: none; cursor: pointer; color: var(--muted); display: flex; align-items: center; justify-content: center; border-radius: var(--radius); font-size: 1rem; transition: all var(--transition); flex-shrink: 0; }
+  .rm-btn:hover { background: #fde8e8; color: #8b2020; }
+  .add-btn { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: var(--sage-dark); background: none; border: 1px dashed var(--sage-light); padding: 6px 14px; cursor: pointer; border-radius: var(--radius); transition: all var(--transition); }
+  .add-btn:hover { background: #eef3ec; border-style: solid; }
+  .col-head { display: grid; gap: 8px; margin-bottom: 6px; padding: 0 2px; }
+  .col-head span { font-size: 0.66rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+
+  /* TAG SELECTOR */
+  .tag-row { display: flex; gap: 7px; flex-wrap: wrap; }
+  .tag-opt { padding: 5px 13px; border: 1px solid var(--border); border-radius: 20px; background: white; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; color: var(--muted); cursor: pointer; transition: all var(--transition); }
+  .tag-opt:hover { border-color: var(--sage); color: var(--sage-dark); }
+  .tag-opt.active { background: var(--sage-dark); color: white; border-color: var(--sage-dark); }
+
+  /* FORM ACTIONS */
+  .form-actions { display: flex; gap: 10px; margin-top: 8px; }
+  .btn-draft { padding: 10px 20px; background: white; color: var(--charcoal); font-family: 'DM Sans', sans-serif; font-size: 0.84rem; border: 1px solid var(--border); cursor: pointer; border-radius: var(--radius); transition: all var(--transition); }
+  .btn-draft:hover { border-color: var(--charcoal); }
+  .btn-publish { padding: 10px 22px; background: var(--sage-dark); color: white; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; font-weight: 500; border: none; cursor: pointer; border-radius: var(--radius); transition: background var(--transition); }
+  .btn-publish:hover { background: var(--sage); }
+
+  /* PROMO CARDS */
+  .promo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+  .promo-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  .promo-code { font-family: monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.06em; color: var(--charcoal); margin-bottom: 4px; }
+  .promo-type { font-size: 0.76rem; color: var(--muted); margin-bottom: 14px; }
+  .promo-value { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 600; color: var(--sage-dark); margin-bottom: 14px; }
+  .promo-stats { display: flex; gap: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .promo-stat label { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); display: block; margin-bottom: 2px; }
+  .promo-stat span { font-size: 0.86rem; font-weight: 500; }
+  .promo-header { display: flex; align-items: flex-start; justify-content: space-between; }
+
+  /* BRAND PANEL */
+  .brand-layout { display: grid; grid-template-columns: 1fr 280px; gap: 20px; }
+  .brand-preview { border: 2px dashed var(--border); border-radius: var(--radius); padding: 28px; text-align: center; background: white; }
+  .preview-nav { height: 40px; border-radius: var(--radius) var(--radius) 0 0; display: flex; align-items: center; padding: 0 16px; margin: -28px -28px 16px; }
+  .preview-logo { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; color: white; }
+  .preview-hero { height: 72px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+  .preview-hero span { font-family: 'Playfair Display', serif; font-size: 0.88rem; font-style: italic; color: white; }
+  .preview-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .preview-card { height: 44px; background: var(--cream); border-radius: var(--radius); }
+  .color-row { display: flex; align-items: center; gap: 8px; }
+  .color-swatch { width: 32px; height: 32px; border-radius: var(--radius); border: 1px solid var(--border); flex-shrink: 0; }
+  .color-input { font-family: 'DM Sans', sans-serif; font-size: 0.84rem; border: 1px solid var(--border); padding: 7px 10px; border-radius: var(--radius); outline: none; width: 110px; }
+  .brand-preview-label { font-size: 0.72rem; color: var(--muted); margin-top: 12px; }
+
+  /* IMAGE UPLOAD */
+  .upload-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 28px; text-align: center; background: var(--warm-white); cursor: pointer; transition: border-color var(--transition); }
+  .upload-zone:hover { border-color: var(--sage-light); }
+  .upload-zone p { font-size: 0.82rem; color: var(--muted); margin-top: 6px; }
+  .upload-icon { font-size: 1.8rem; margin-bottom: 6px; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px); background: var(--charcoal); color: white; padding: 11px 22px; border-radius: 40px; font-size: 0.84rem; opacity: 0; transition: all 0.25s ease; z-index: 999; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ADMIN NAV -->
+<div class="admin-nav">
+  <div style="display:flex;align-items:center;">
+    <a href="index.html" class="admin-logo">Recip<span>al</span></a>
+    <span class="admin-badge">Admin</span>
+  </div>
+  <div class="admin-nav-right">
+    <a href="index.html" class="admin-nav-link">View Site →</a>
+    <div class="admin-avatar">JD</div>
+  </div>
+</div>
+
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <div class="admin-sidebar">
+    <div class="sidebar-label">Content</div>
+    <button class="sidebar-btn active" onclick="showPanel('recipes')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      All Recipes <span class="sidebar-count">12</span>
+    </button>
+    <button class="sidebar-btn" onclick="showPanel('new-recipe')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add New Recipe
+    </button>
+    <div class="sidebar-label">Commerce</div>
+    <button class="sidebar-btn" onclick="showPanel('promos')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+      Promo Codes <span class="sidebar-count">3</span>
+    </button>
+    <div class="sidebar-label">Platform</div>
+    <button class="sidebar-btn" onclick="showPanel('brand')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      Brand Settings
+    </button>
+    <button class="sidebar-btn" onclick="showPanel('users')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Users <span class="sidebar-count">8</span>
+    </button>
+  </div>
+
+  <!-- MAIN -->
+  <div class="admin-main">
+
+    <!-- RECIPES LIST -->
+    <div class="panel active" id="panel-recipes">
+      <div class="panel-header">
+        <div><h1>Recipes</h1><p>Manage all recipes on the platform</p></div>
+        <button class="btn-add" onclick="showPanel('new-recipe')">+ Add Recipe</button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value">12</div><div class="stat-delta">↑ 3 this month</div></div>
+        <div class="stat-card"><div class="stat-label">Published</div><div class="stat-value">9</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Rating</div><div class="stat-value">4.7</div><div class="stat-delta">↑ 0.2 this month</div></div>
+        <div class="stat-card"><div class="stat-label">Total Saves</div><div class="stat-value">284</div><div class="stat-delta">↑ 42 this week</div></div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div class="table-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" placeholder="Search recipes…">
+          </div>
+          <select class="table-select" style="margin-left:auto;"><option>All Proteins</option><option>Beef</option><option>Chicken</option><option>Pork</option><option>Seafood</option></select>
+          <select class="table-select"><option>All Statuses</option><option>Published</option><option>Draft</option><option>In Review</option></select>
+        </div>
+        <table>
+          <thead><tr><th>Recipe</th><th>Protein</th><th>Cut</th><th>Difficulty</th><th>Rating</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div class="recipe-cell"><div class="recipe-thumb" style="background:#f0e8dc;"><svg viewBox="0 0 24 24" fill="none" stroke="#8B6F47" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div><div><div class="rc-title">Perfect Cast Iron Ribeye</div><div class="rc-id">#RCP001</div></div></div></td>
+              <td><span class="pdot pdot-beef"></span>Beef</td><td>Ribeye</td><td>Medium</td><td>⭑ 4.9 (58)</td>
+              <td><span class="badge badge-pub">Published</span></td>
+              <td><button class="tbl-action" onclick="showPanel('new-recipe')">Edit</button></td>
+            </tr>
+            <tr>
+              <td><div class="recipe-cell"><div class="recipe-thumb" style="background:#fdf4dc;"><svg viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div><div><div class="rc-title">Lemon Herb Roast Chicken Thighs</div><div class="rc-id">#RCP002</div></div></div></td>
+              <td><span class="pdot pdot-chk"></span>Chicken</td><td>Thigh</td><td>Easy</td><td>⭑ 5.0 (41)</td>
+              <td><span class="badge badge-pub">Published</span></td>
+              <td><button class="tbl-action" onclick="showPanel('new-recipe')">Edit</button></td>
+            </tr>
+            <tr>
+              <td><div class="recipe-cell"><div class="recipe-thumb" style="background:#f0e8dc;"><svg viewBox="0 0 24 24" fill="none" stroke="#8B6F47" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div><div><div class="rc-title">Classic Beef Wellington</div><div class="rc-id">#RCP003</div></div></div></td>
+              <td><span class="pdot pdot-beef"></span>Beef</td><td>Tenderloin</td><td>Hard</td><td>⭑ 4.7 (31)</td>
+              <td><span class="badge badge-review">In Review</span></td>
+              <td><button class="tbl-action" onclick="showPanel('new-recipe')">Edit</button></td>
+            </tr>
+            <tr>
+              <td><div class="recipe-cell"><div class="recipe-thumb" style="background:#fde8ee;"><svg viewBox="0 0 24 24" fill="none" stroke="#E8879C" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div><div><div class="rc-title">Honey Garlic Pork Tenderloin</div><div class="rc-id">#RCP004</div></div></div></td>
+              <td><span class="pdot pdot-pork"></span>Pork</td><td>Tenderloin</td><td>Easy</td><td>⭑ 4.4 (18)</td>
+              <td><span class="badge badge-draft">Draft</span></td>
+              <td><button class="tbl-action" onclick="showPanel('new-recipe')">Edit</button></td>
+            </tr>
+            <tr>
+              <td><div class="recipe-cell"><div class="recipe-thumb" style="background:#deeef8;"><svg viewBox="0 0 24 24" fill="none" stroke="#4A90C4" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg></div><div><div class="rc-title">Pan-Seared Salmon with Dill Butter</div><div class="rc-id">#RCP005</div></div></div></td>
+              <td><span class="pdot pdot-sea"></span>Seafood</td><td>Salmon</td><td>Easy</td><td>⭑ 4.8 (29)</td>
+              <td><span class="badge badge-pub">Published</span></td>
+              <td><button class="tbl-action" onclick="showPanel('new-recipe')">Edit</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- NEW RECIPE FORM -->
+    <div class="panel" id="panel-new-recipe">
+      <div class="panel-header">
+        <div><h1>Add New Recipe</h1><p>Fill in all required fields before publishing</p></div>
+        <button class="btn-secondary" onclick="showPanel('recipes')">← Back</button>
+      </div>
+
+      <div class="form-layout">
+        <div>
+          <!-- BASICS -->
+          <div class="form-card">
+            <div class="form-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Recipe Details</div>
+            <div class="field"><label>Recipe Title *</label><input type="text" placeholder="e.g. Perfect Cast Iron Ribeye" value="Perfect Cast Iron Ribeye"></div>
+            <div class="field"><label>Short Description</label><textarea placeholder="1–2 sentence summary shown on recipe cards…">A restaurant-quality crust without the grill. Butter-basted, herb-finished, and done in under 20 minutes.</textarea></div>
+            <div class="form-3">
+              <div class="field" style="margin:0"><label>Prep Time</label><input type="text" value="5 min"></div>
+              <div class="field" style="margin:0"><label>Cook Time</label><input type="text" value="12 min"></div>
+              <div class="field" style="margin:0"><label>Rest Time</label><input type="text" value="5 min"></div>
+            </div>
+          </div>
+
+          <!-- TAGS -->
+          <div class="form-card">
+            <div class="form-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Tags &amp; Classification</div>
+            <div class="form-2">
+              <div class="field"><label>Protein Type *</label><select><option>Beef</option><option>Chicken</option><option>Pork</option><option>Seafood</option></select></div>
+              <div class="field"><label>Cut *</label><select><option>Ribeye</option><option>Short Rib</option><option>Tenderloin</option><option>Thigh</option><option>Breast</option><option>Shoulder</option><option>Salmon</option><option>Shrimp</option></select></div>
+            </div>
+            <div class="field"><label>Difficulty *</label>
+              <div class="tag-row">
+                <button class="tag-opt" onclick="selectTag(this)">Easy</button>
+                <button class="tag-opt active" onclick="selectTag(this)">Medium</button>
+                <button class="tag-opt" onclick="selectTag(this)">Hard</button>
+              </div>
+            </div>
+            <div class="field" style="margin:0;max-width:120px;"><label>Servings</label><input type="number" value="2" min="1" max="20"></div>
+          </div>
+
+          <!-- INGREDIENTS -->
+          <div class="form-card">
+            <div class="form-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>Ingredients</div>
+            <div class="col-head" style="grid-template-columns:1fr 70px 70px 26px;padding:0 4px 0 2px;">
+              <span>Name</span><span>Qty</span><span>Unit</span><span></span>
+            </div>
+            <div class="dyn-list" id="ingList">
+              <div class="dyn-row"><input type="text" value="Ribeye steak (1.5&quot; thick)"><input type="text" class="sm" value="1"><input type="text" class="sm" value="steak"><button class="rm-btn" onclick="rmRow(this)">×</button></div>
+              <div class="dyn-row"><input type="text" value="Flaky sea salt"><input type="text" class="sm" value="1.5"><input type="text" class="sm" value="tsp"><button class="rm-btn" onclick="rmRow(this)">×</button></div>
+              <div class="dyn-row"><input type="text" value="Unsalted butter"><input type="text" class="sm" value="2"><input type="text" class="sm" value="tbsp"><button class="rm-btn" onclick="rmRow(this)">×</button></div>
+              <div class="dyn-row"><input type="text" value="Garlic cloves, smashed"><input type="text" class="sm" value="3"><input type="text" class="sm" value="cloves"><button class="rm-btn" onclick="rmRow(this)">×</button></div>
+            </div>
+            <button class="add-btn" onclick="addIng()">+ Add Ingredient</button>
+          </div>
+
+          <!-- EQUIPMENT -->
+          <div class="form-card">
+            <div class="form-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Required Equipment</div>
+            <div class="col-head" style="grid-template-columns:1fr 1fr 26px;padding:0 4px 0 2px;"><span>Equipment Name</span><span>Sponsor Link URL</span><span></span></div>
+            <div class="dyn-list" id="eqList">
+              <div class="dyn-row"><input type="text" value="Cast Iron Skillet (10–12&quot;)"><input type="text" value="https://kitchencraft.co/cast-iron"><button class="rm-btn" onclick="rmRow(this)">×</button></div>
+              <div class="dyn-row"><input type="text" value="Instant-Read Thermometer"><input type="text" value="https://kitchencraft.co/thermometer"><button class="rm-btn" onclick="rmRow(this)">×</button></div>
+            </div>
+            <button class="add-btn" onclick="addEq()">+ Add Equipment</button>
+          </div>
+
+          <!-- INSTRUCTIONS -->
+          <div class="form-card">
+            <div class="form-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Instructions</div>
+            <div class="dyn-list" id="stepList">
+              <div class="dyn-row"><textarea placeholder="Step 1…">Pat the ribeye completely dry with paper towels. Season generously on all sides. Let sit at room temperature for 20 minutes.</textarea><button class="rm-btn" onclick="rmRow(this)">×</button></div>
+              <div class="dyn-row"><textarea placeholder="Step 2…">Heat cast iron skillet over high heat until smoking. Add oil and swirl to coat.</textarea><button class="rm-btn" onclick="rmRow(this)">×</button></div>
+            </div>
+            <button class="add-btn" onclick="addStep()">+ Add Step</button>
+          </div>
+
+          <!-- VIDEO -->
+          <div class="form-card">
+            <div class="form-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>YouTube Video</div>
+            <div class="field" style="margin:0"><label>YouTube URL</label><input type="text" placeholder="https://www.youtube.com/watch?v=…" value="https://www.youtube.com/watch?v=3MvtFm8GkSY"></div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-draft" onclick="toast('Draft saved')">Save Draft</button>
+            <button class="btn-publish" onclick="toast('✓ Recipe published!')">Publish Recipe</button>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div>
+          <div class="form-card">
+            <div class="form-card-title">Publish Settings</div>
+            <div class="field"><label>Status</label><select><option>Draft</option><option selected>Published</option><option>In Review</option></select></div>
+            <div class="field" style="margin:0"><label>Featured</label><select><option>No</option><option>Yes — Editor's Pick</option></select></div>
+          </div>
+          <div class="form-card">
+            <div class="form-card-title">Recipe Image</div>
+            <div class="upload-zone" onclick="toast('Image upload — Supabase Storage in Phase 2')">
+              <div class="upload-icon">📷</div>
+              <div style="font-size:0.82rem;font-weight:500;color:var(--muted);">Click to upload</div>
+              <p>JPG, PNG up to 5MB</p>
+            </div>
+          </div>
+          <div class="form-card">
+            <div class="form-card-title">Cook's Notes</div>
+            <div class="field" style="margin:0"><label>Tips &amp; Notes</label><textarea placeholder="Any tips, substitutions…">The single biggest mistake is not getting the pan hot enough. If not visibly smoking, wait longer.</textarea></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROMO CODES -->
+    <div class="panel" id="panel-promos">
+      <div class="panel-header">
+        <div><h1>Promo Codes</h1><p>Equipment and product discount codes</p></div>
+        <button class="btn-add" onclick="toast('New promo — Phase 3')">+ Create Code</button>
+      </div>
+      <div class="promo-grid">
+        <div class="promo-card">
+          <div class="promo-header"><div><div class="promo-code">KITCHEN20</div><div class="promo-type">Equipment · 20% off entire order</div></div><span class="badge badge-pub">Active</span></div>
+          <div class="promo-value">20% OFF</div>
+          <div class="promo-stats"><div class="promo-stat"><label>Used</label><span>47</span></div><div class="promo-stat"><label>Limit</label><span>100</span></div><div class="promo-stat"><label>Expires</label><span>Dec 31</span></div></div>
+        </div>
+        <div class="promo-card">
+          <div class="promo-header"><div><div class="promo-code">RIBEYE10</div><div class="promo-type">Cast Iron Collection · $10 off</div></div><span class="badge badge-pub">Active</span></div>
+          <div class="promo-value">$10 OFF</div>
+          <div class="promo-stats"><div class="promo-stat"><label>Used</label><span>23</span></div><div class="promo-stat"><label>Limit</label><span>50</span></div><div class="promo-stat"><label>Expires</label><span>Mar 31</span></div></div>
+        </div>
+        <div class="promo-card">
+          <div class="promo-header"><div><div class="promo-code">NEWMEMBER</div><div class="promo-type">New users · First order 15% off</div></div><span class="badge badge-draft">Inactive</span></div>
+          <div class="promo-value">15% OFF</div>
+          <div class="promo-stats"><div class="promo-stat"><label>Used</label><span>0</span></div><div class="promo-stat"><label>Limit</label><span>∞</span></div><div class="promo-stat"><label>Expires</label><span>Never</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRAND SETTINGS -->
+    <div class="panel" id="panel-brand">
+      <div class="panel-header">
+        <div><h1>Brand Settings</h1><p>Customize your instance's look and contact info</p></div>
+        <button class="btn-add" onclick="toast('✓ Brand settings saved!')">Save Changes</button>
+      </div>
+      <div class="brand-layout">
+        <div>
+          <div class="form-card">
+            <div class="form-card-title">Brand Identity</div>
+            <div class="field"><label>Brand / Site Name</label><input type="text" value="Recipal" id="brandName" oninput="updatePreview()"></div>
+            <div class="field"><label>Tagline</label><input type="text" value="Simple. Seasonal. Satisfying."></div>
+            <div class="field"><label>Logo Upload</label><div class="upload-zone" onclick="toast('Logo upload — Phase 2')"><div class="upload-icon">🖼</div><p>PNG or SVG with transparent background</p></div></div>
+            <div class="form-2">
+              <div class="field" style="margin:0"><label>Primary Colour</label><div class="color-row"><div class="color-swatch" id="primarySwatch" style="background:#4E6145;"></div><input class="color-input" type="text" id="primaryColor" value="#4E6145" oninput="updatePreview()"></div></div>
+              <div class="field" style="margin:0"><label>Accent Colour</label><div class="color-row"><div class="color-swatch" style="background:#8B6F47;"></div><input class="color-input" type="text" value="#8B6F47"></div></div>
+            </div>
+          </div>
+          <div class="form-card">
+            <div class="form-card-title">Contact Information</div>
+            <div class="form-2">
+              <div class="field"><label>Contact Email</label><input type="email" value="hello@recipal.com"></div>
+              <div class="field"><label>Response Time</label><input type="text" value="Within 2 business days"></div>
+            </div>
+            <div class="form-2">
+              <div class="field" style="margin:0"><label>Instagram</label><input type="text" placeholder="https://instagram.com/…"></div>
+              <div class="field" style="margin:0"><label>Pinterest</label><input type="text" placeholder="https://pinterest.com/…"></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="form-card">
+            <div class="form-card-title">Live Preview</div>
+            <div class="brand-preview">
+              <div class="preview-nav" id="previewNav" style="background:#4E6145;"><span class="preview-logo" id="previewLogo">Recipal</span></div>
+              <div class="preview-hero" id="previewHero" style="background:#4E6145;"><span>Real recipes…</span></div>
+              <div class="preview-cards"><div class="preview-card"></div><div class="preview-card"></div></div>
+            </div>
+            <p class="brand-preview-label">Updates as you type</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="panel" id="panel-users">
+      <div class="panel-header">
+        <div><h1>Users</h1><p>Manage platform users and roles</p></div>
+        <button class="btn-add" onclick="toast('Invite — Supabase Auth in Phase 2')">+ Invite User</button>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Saves</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><strong>Jane D.</strong></td><td>jane@example.com</td><td><span class="badge badge-admin">Admin</span></td><td>Jan 2025</td><td>—</td><td><button class="tbl-action">Edit Role</button></td></tr>
+            <tr><td><strong>Marcus T.</strong></td><td>marcus@example.com</td><td><span class="badge badge-team">Team Member</span></td><td>Feb 2025</td><td>—</td><td><button class="tbl-action">Edit Role</button></td></tr>
+            <tr><td><strong>Priya S.</strong></td><td>priya@example.com</td><td><span class="badge badge-cook">Home Cook</span></td><td>Mar 2025</td><td>12</td><td><button class="tbl-action">Edit Role</button></td></tr>
+            <tr><td><strong>Tom W.</strong></td><td>tom@example.com</td><td><span class="badge badge-cook">Home Cook</span></td><td>Mar 2025</td><td>7</td><td><button class="tbl-action">Edit Role</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const panels=['recipes','new-recipe','promos','brand','users'];
+const labels={'recipes':'All Recipes','new-recipe':'Add New Recipe','promos':'Promo Codes','brand':'Brand Settings','users':'Users'};
+
+function showPanel(id){
+  panels.forEach(p=>document.getElementById('panel-'+p).classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.querySelectorAll('.sidebar-btn').forEach(b=>{
+    b.classList.toggle('active',b.textContent.trim().startsWith(labels[id]||'~~'));
+  });
+}
+
+function addIng(){const l=document.getElementById('ingList');const d=document.createElement('div');d.className='dyn-row';d.innerHTML=`<input type="text" placeholder="Ingredient name"><input type="text" class="sm" placeholder="Qty"><input type="text" class="sm" placeholder="Unit"><button class="rm-btn" onclick="rmRow(this)">×</button>`;l.appendChild(d);d.querySelector('input').focus();}
+function addEq(){const l=document.getElementById('eqList');const d=document.createElement('div');d.className='dyn-row';d.innerHTML=`<input type="text" placeholder="Equipment name"><input type="text" placeholder="Sponsor link (optional)"><button class="rm-btn" onclick="rmRow(this)">×</button>`;l.appendChild(d);d.querySelector('input').focus();}
+function addStep(){const l=document.getElementById('stepList');const d=document.createElement('div');d.className='dyn-row';d.innerHTML=`<textarea placeholder="Step instructions…"></textarea><button class="rm-btn" onclick="rmRow(this)">×</button>`;l.appendChild(d);d.querySelector('textarea').focus();}
+function rmRow(btn){btn.closest('.dyn-row').remove();}
+function selectTag(btn){btn.closest('.tag-row').querySelectorAll('.tag-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+
+function updatePreview(){
+  const name=document.getElementById('brandName').value||'Brand';
+  const color=document.getElementById('primaryColor').value;
+  document.getElementById('previewLogo').textContent=name;
+  document.getElementById('previewSwatch')&&(document.getElementById('previewSwatch').style.background=color);
+  if(/^#[0-9a-fA-F]{6}$/.test(color)){
+    document.getElementById('previewNav').style.background=color;
+    document.getElementById('previewHero').style.background=color;
+  }
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
+</script>
+</body>
+</html>
